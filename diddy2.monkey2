@@ -3,10 +3,12 @@ Namespace diddy2
 #Import "<std>"
 #Import "<mojo>"
 
-#Import "sprite"
+#Import "app"
 #Import "diddywindow"
 #Import "screen"
+#Import "screenfade"
 #Import "deltatiming"
+#Import "sprite"
 #Import "math"
 
 Using std..

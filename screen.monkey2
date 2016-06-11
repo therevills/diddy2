@@ -9,7 +9,7 @@ Class Screen Abstract
 	
 	Method Start:Void() Abstract
 	
-	Method Render:Void() Abstract
+	Method Render:Void(delta:Float) Abstract
 	
 	Method Update:Void() Abstract
 	
