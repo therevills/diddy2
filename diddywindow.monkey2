@@ -10,16 +10,40 @@ Class DiddyWindow Extends Window
 	
 	Field currentScreen:Screen
 	Field screenFade:ScreenFade
+	Field nextScreen:Screen
 	
 	Global GameTime:FixedRateLogicTimer = New FixedRateLogicTimer(UPDATE_FREQUENCY, SPIKE_SUPPRESSION)
 	
-	Method New( title:String, width:Int, height:Int, filterTextures:Bool = True, flags:WindowFlags = WindowFlags.Resizable )
+	Global instance:DiddyWindow = null
+	
+	Function GetWindow:DiddyWindow()
+		If instance = null
+			instance = New DiddyWindow("Test", 640, 480, True)
+		End
+		
+		Return instance
+	End
+	
+	Method New(title:String, width:Int, height:Int, filterTextures:Bool = True, flags:WindowFlags = WindowFlags.Resizable)
 		Super.New( title, width, height, flags )
 		Layout = "letterbox"
 		SetVirtualResolution(width, height)
 		dt = New DeltaTimer(FPS)
+		Self.screenFade = New ScreenFade
 		SwapInterval = 1
 		SeedRnd(Millisecs())
+		instance = Self
+	End
+	
+	Method Start(firstScreen:Screen, autoFadeIn:Bool = True) Virtual
+		'ResetDelta()
+		firstScreen.autoFadeIn = autoFadeIn
+		If autoFadeIn
+			'firstScreen.autoFadeInTime = fadeInTime
+			'firstScreen.autoFadeInSound = fadeSound
+			'firstScreen.autoFadeInMusic = fadeMusic
+		End
+		firstScreen.PreStart()
 	End
 	
 	Method GameLogic(delta:Float)
@@ -27,16 +51,17 @@ Class DiddyWindow Extends Window
 			screenFade.Update(delta)
 		End
 		If currentScreen
-			currentScreen.Render(delta)
+			currentScreen.Update(delta)
 		End
 	End
 	
 	Method GameRender(canvas:Canvas, tween:Float)
 		If currentScreen
 			If Not screenFade.active Or (screenFade.allowScreenUpdate And screenFade.active)
-				currentScreen.Update()
+				currentScreen.Render(canvas, tween)
 			End
 		End
+		If screenFade.active Then screenFade.Render(canvas)
 		RenderDebug(canvas)
 	End
 	

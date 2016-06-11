@@ -10,7 +10,7 @@ Class ScreenFade
 	Field fadeSound:Bool
 	Field allowScreenUpdate:Bool = True
 	
-	Method Start:Void(fadeTime:Float, fadeOut:Bool, fadeSound:Bool = False, fadeMusic:Bool = False, allowScreenUpdate:Bool = True)
+	Method Start(fadeTime:Float, fadeOut:Bool, fadeSound:Bool = False, fadeMusic:Bool = False, allowScreenUpdate:Bool = True)
 		If active Then Return
 '		diddyGame.ResetDelta()
 		active = True
@@ -32,7 +32,7 @@ Class ScreenFade
 		counter = 0
 	End
 
-	Method Update:Void(delta:Float)
+	Method Update(delta:Float)
 		If Not active Return
 		counter += 1 * delta
 		CalcRatio()
@@ -44,18 +44,19 @@ Class ScreenFade
 		If fadeMusic
 			'diddyGame.SetMojoMusicVolume((ratio) * (diddyGame.musicVolume / 100.0))
 		End
+		Print counter + " " + fadeTime
 		If counter > fadeTime
 '			diddyGame.ResetDelta()
 			active = False
 			If fadeOut			
-				'diddyGame.currentScreen.PostFadeOut()
+				DiddyWindow.GetWindow().currentScreen.PostFadeOut()
 			Else
-				'diddyGame.currentScreen.PostFadeIn()
+				DiddyWindow.GetWindow().currentScreen.PostFadeIn()
 			End
 		End
 	End
 		
-	Method CalcRatio:Void()
+	Method CalcRatio()
 		ratio = counter/fadeTime
 		If ratio < 0
 			ratio = 0
@@ -74,13 +75,13 @@ Class ScreenFade
 		End
 	End
 	
-	Method Render:Void(canvas:Canvas)
+	Method Render(canvas:Canvas)
 		If Not active Return
-		'SetAlpha 1 - ratio
-		'SetColor 0, 0, 0
-		'DrawRect 0, 0, DEVICE_WIDTH, DEVICE_HEIGHT
-		'SetAlpha 1
-		'SetColor 255, 255, 255
+		canvas.Color = New Color(0, 0, 0)
+		canvas.Alpha = 1 - ratio
+		canvas.DrawRect(0, 0, 640, 480)
+		canvas.Alpha = 1
+		canvas.Color = New Color(1, 1, 1)
 	End
 	
 End
