@@ -8,6 +8,7 @@ Class DiddyWindow Extends Window
 	Field dt:DeltaTimer
 	Field FPS:Int = 60
 	
+	Field screenBank:ScreenBank
 	Field currentScreen:Screen
 	Field screenFade:ScreenFade
 	Field nextScreen:Screen
@@ -31,19 +32,22 @@ Class DiddyWindow Extends Window
 		dt = New DeltaTimer(FPS)
 		Self.screenFade = New ScreenFade(width, height)
 		SwapInterval = 1
-		SeedRnd(Millisecs())
+		GenerateSeed()
+		ClearColor = Color.Black
 		instance = Self
+		Self.screenBank = New ScreenBank
+		Self.screenBank.AddScreen(New EmptyScreen("Empty"))
+		Self.screenBank.AddScreen(New ExitScreen("Exit"))
 	End
 	
-	Method Start(firstScreen:Screen, autoFadeIn:Bool = True) Virtual
-		'ResetDelta()
-		firstScreen.autoFadeIn = autoFadeIn
-		If autoFadeIn
-			'firstScreen.autoFadeInTime = fadeInTime
-			'firstScreen.autoFadeInSound = fadeSound
-			'firstScreen.autoFadeInMusic = fadeMusic
-		End
-		firstScreen.PreStart()
+	Method GenerateSeed()
+		SeedRnd(Millisecs())
+	End
+	
+	Method Start(screen:Screen)
+		Local s:Screen = screenBank.GetScreen("Empty")
+		s.SetDestinationScreen(screen)
+		s.PreStart()
 	End
 	
 	Method GameLogic(delta:Float)
@@ -51,23 +55,21 @@ Class DiddyWindow Extends Window
 			screenFade.Update(delta)
 		End
 		If currentScreen
-			currentScreen.Update(delta)
+			If Not screenFade.active Then currentScreen.Update(delta)
 		End
 	End
 	
 	Method GameRender(canvas:Canvas, tween:Float)
 		If currentScreen
-			If Not screenFade.active Or (screenFade.allowScreenUpdate And screenFade.active)
-				currentScreen.Render(canvas, tween)
-			End
+			currentScreen.Render(canvas, tween)
 		End
 		If screenFade.active Then screenFade.Render(canvas)
 		RenderDebug(canvas)
 	End
 	
 	Method RenderDebug(canvas:Canvas)
-		GameTime.ShowSpikeSuppression(100, 40, canvas)
 		GameTime.ShowFPS(0, 60, canvas)
+		GameTime.ShowSpikeSuppression(0, 100, canvas)
 	End
 	
 	Method OnRender(canvas:Canvas) Override

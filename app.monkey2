@@ -12,4 +12,12 @@ Class DiddyApp
 		window.Start(screen)
 		App.Run()
 	End
+	
+	Method AddScreen(screen:Screen)
+		window.screenBank.AddScreen(screen)
+	End
+	
+	Method GetScreen:Screen(name:String)
+		Return window.screenBank.GetScreen(name)
+	End
 End

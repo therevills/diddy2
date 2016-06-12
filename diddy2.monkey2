@@ -7,6 +7,7 @@ Namespace diddy2
 #Import "diddywindow"
 #Import "screen"
 #Import "screenfade"
+#Import "screenbank"
 #Import "deltatiming"
 #Import "sprite"
 #Import "math"

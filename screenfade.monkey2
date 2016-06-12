@@ -1,61 +1,51 @@
 Namespace diddy2.screenfade
 
 Class ScreenFade
+	Const FADE_IN:Int = 0
+	Const FADE_OUT:Int = 1
+	
+	Field active:Bool
+	Field ratio:Float = 0
+	Field fadeType:Int
+	Field fadeTime:Float = 1
+	Field counter:Float
+	
 	Field width:Int
 	Field height:Int
-	Field fadeTime:Float
-	Field fadeOut:Bool
-	Field ratio:Float = 0
-	Field active:Bool
-	Field counter:Float
-	Field fadeMusic:Bool
-	Field fadeSound:Bool
-	Field allowScreenUpdate:Bool = True
 	
 	Method New(width:Int, height:Int)
 		Self.width = width
 		Self.height = height
 	End
 	
-	Method Start(fadeTime:Float, fadeOut:Bool, fadeSound:Bool = False, fadeMusic:Bool = False, allowScreenUpdate:Bool = True)
+	Method Start(fadeType:Int = FADE_IN, fadeTime:Float = 1)
 		If active Then Return
-'		diddyGame.ResetDelta()
+		SetFadeTime(fadeTime)
 		active = True
-		Self.fadeTime = fadeTime 'diddyGame.CalcAnimLength(fadeTime)
-		Self.fadeOut = fadeOut
-		Self.fadeMusic = fadeMusic
-		Self.fadeSound = fadeSound
-		Self.allowScreenUpdate = allowScreenUpdate
 		
-		If fadeOut
+		Self.fadeType = fadeType
+		
+		If fadeType = FADE_OUT
 			ratio = 1
 		Else
-			ratio = 0
-			' set the music volume to zero if fading in the music
-			If Self.fadeMusic
-				'diddyGame.SetMojoMusicVolume(0)
-			End			
+			ratio = 0	
 		End
 		counter = 0
 	End
-
+	
+	Method SetFadeTime(ms:Float)
+		Self.fadeTime = ms
+	End
+	
 	Method Update(delta:Float)
 		If Not active Return
+		
 		counter += 1 * delta
 		CalcRatio()
-		If fadeSound
-'			For Local i:Int = 0 To SoundPlayer.MAX_CHANNELS
-				'SetChannelVolume(i, (ratio) * (diddyGame.soundVolume / 100.0))
-'			Next
-		End
-		If fadeMusic
-			'diddyGame.SetMojoMusicVolume((ratio) * (diddyGame.musicVolume / 100.0))
-		End
-		Print counter + " " + fadeTime
+
 		If counter > fadeTime
-'			diddyGame.ResetDelta()
 			active = False
-			If fadeOut			
+			If fadeType = FADE_OUT		
 				DiddyWindow.GetWindow().currentScreen.PostFadeOut()
 			Else
 				DiddyWindow.GetWindow().currentScreen.PostFadeIn()
@@ -64,20 +54,14 @@ Class ScreenFade
 	End
 		
 	Method CalcRatio()
-		ratio = counter/fadeTime
+		ratio = counter / fadeTime
 		If ratio < 0
 			ratio = 0
-			If fadeMusic
-				'diddyGame.SetMojoMusicVolume(0)
-			End
 		End
 		If ratio > 1
 			ratio = 1
-			If fadeMusic
-				'diddyGame.SetMojoMusicVolume(diddyGame.musicVolume / 100.0)
-			End
 		End
-		If fadeOut
+		If fadeType = FADE_OUT
 			ratio = 1 - ratio
 		End
 	End

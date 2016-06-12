@@ -2,22 +2,20 @@ Namespace diddy2.screen
 
 Class Screen Abstract
 	Field name:String = ""
-	Field autoFadeIn:Bool
-	Field autoFadeInTime:Float = 2
+	Field destinationScreen:Screen
 	
-	Method New(name:String="")
+	Method New(name:String = "")
 		Self.name = name
 	End
 	
-	Method PostFadeIn()
-	End
-	
 	Method PreStart()
-		Print "PreStart " + name
 		DiddyWindow.GetWindow().currentScreen = Self
 		Load()
-		DiddyWindow.GetWindow().screenFade.Start(autoFadeInTime, False)
+		DiddyWindow.GetWindow().screenFade.Start()
 		Start()
+	End
+	
+	Method PostFadeIn()
 	End
 	
 	Method Load()
@@ -29,7 +27,7 @@ Class Screen Abstract
 	
 	Method Update(delta:Float) Abstract
 	
-	Method PostFadeOut:Void()
+	Method PostFadeOut()
 		Kill()
 		DiddyWindow.GetWindow().nextScreen.PreStart()
 	End
@@ -37,13 +35,49 @@ Class Screen Abstract
 	Method Kill()
 	End
 	
-	Method FadeToScreen:Void(screen:Screen)
-		' don't try to fade twice
-		If DiddyWindow.GetWindow().screenFade.active Then Return
-				
-		' trigger the fade out
-		DiddyWindow.GetWindow().nextScreen = screen
-		DiddyWindow.GetWindow().screenFade.Start(1, True, True, True, True)
+	Method SetDestinationScreen(screen:Screen)
+		destinationScreen = screen
 	End
 	
+	Method MoveToScreen(screen:Screen, fadeTime:Float = 1)
+		If DiddyWindow.GetWindow().screenFade.active Then Return
+		DiddyWindow.GetWindow().nextScreen = screen
+		If fadeTime = 0 
+			DiddyWindow.GetWindow().currentScreen.PostFadeOut()
+		Else
+			DiddyWindow.GetWindow().screenFade.Start(ScreenFade.FADE_OUT, fadeTime)
+		End
+	End
+End
+
+Class EmptyScreen Extends Screen
+	Method New(name:String)
+		Super.New(name)
+	End
+	
+	Method Start() Override
+	End
+	
+	Method Update(delta:Float) Override
+		MoveToScreen(destinationScreen, 0)
+	End
+	
+	Method Render(canvas:Canvas, tween:Float) Override
+		canvas.Clear
+	End
+End
+
+Class ExitScreen Extends Screen
+	Method New(name:String)
+		Super.New(name)
+	End
+	
+	Method Start() Override
+	End
+	
+	Method Render(canvas:Canvas, tween:Float) Override
+	End
+	
+	Method Update(delta:Float) Override
+	End
 End
