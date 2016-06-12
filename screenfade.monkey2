@@ -1,6 +1,8 @@
 Namespace diddy2.screenfade
 
 Class ScreenFade
+	Field width:Int
+	Field height:Int
 	Field fadeTime:Float
 	Field fadeOut:Bool
 	Field ratio:Float = 0
@@ -9,6 +11,11 @@ Class ScreenFade
 	Field fadeMusic:Bool
 	Field fadeSound:Bool
 	Field allowScreenUpdate:Bool = True
+	
+	Method New(width:Int, height:Int)
+		Self.width = width
+		Self.height = height
+	End
 	
 	Method Start(fadeTime:Float, fadeOut:Bool, fadeSound:Bool = False, fadeMusic:Bool = False, allowScreenUpdate:Bool = True)
 		If active Then Return
@@ -79,7 +86,7 @@ Class ScreenFade
 		If Not active Return
 		canvas.Color = New Color(0, 0, 0)
 		canvas.Alpha = 1 - ratio
-		canvas.DrawRect(0, 0, 640, 480)
+		canvas.DrawRect(0, 0, width, height)
 		canvas.Alpha = 1
 		canvas.Color = New Color(1, 1, 1)
 	End

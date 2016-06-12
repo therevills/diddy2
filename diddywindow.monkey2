@@ -29,7 +29,7 @@ Class DiddyWindow Extends Window
 		Layout = "letterbox"
 		SetVirtualResolution(width, height)
 		dt = New DeltaTimer(FPS)
-		Self.screenFade = New ScreenFade
+		Self.screenFade = New ScreenFade(width, height)
 		SwapInterval = 1
 		SeedRnd(Millisecs())
 		instance = Self
