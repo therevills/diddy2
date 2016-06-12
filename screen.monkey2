@@ -3,6 +3,7 @@ Namespace diddy2.screen
 Class Screen Abstract
 	Field name:String = ""
 	Field autoFadeIn:Bool
+	Field autoFadeInTime:Float = 2
 	
 	Method New(name:String="")
 		Self.name = name
@@ -15,6 +16,7 @@ Class Screen Abstract
 		Print "PreStart " + name
 		DiddyWindow.GetWindow().currentScreen = Self
 		Load()
+		DiddyWindow.GetWindow().screenFade.Start(autoFadeInTime, False)
 		Start()
 	End
 	
