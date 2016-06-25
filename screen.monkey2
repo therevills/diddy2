@@ -63,7 +63,7 @@ Class EmptyScreen Extends Screen
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
-		canvas.Clear
+		canvas.Clear(Color.Black)
 	End
 End
 
