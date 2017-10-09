@@ -11,3 +11,15 @@ End
 Function ToRadians:Float(degree:Float)
 	Return degree * Pi / 180.0
 End
+
+Function Cosd:Double(x:Double)
+	Return Cos(ToRadians(x))
+End
+ 
+Function Sind:Double(x:Double)
+	Return Sin(ToRadians(x))
+End
+
+Function CircleOverlap:Bool(pos1:Vec2f, radius1:Float, pos2:Vec2f, radius2:Float)
+	Return ((pos2.X - pos1.X) * (pos2.X - pos1.X) + (pos2.Y - pos1.Y) * (pos2.Y - pos1.Y)) < (radius1 + radius2) * (radius1 + radius2)
+End

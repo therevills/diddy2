@@ -1,15 +1,49 @@
 Namespace diddy2.sprite
 
 Class Sprite
-	Field x:Float
-	Field y:Float
-	Field z:Float
-	Field angle:Float
-	Field image:Image
+Private
+	Field _position:Vec2f
+	Field _z:Float
+	Field _rotation:Float = Pi / 2
+	Field _image:Image
+	Field _color:Color = Color.White
+	Field _scale:Vec2f = New Vec2f(1, 1)
+Public
+
+	Method New(image:Image, position:Vec2f)
+		_position = position
+		Self._image = image
+	End
 	
-	Method New(image:Image, x:Float, y:Float)
-		Self.x = x
-		Self.y = y
-		Self.image = image
+	Method Render(canvas:Canvas)
+		canvas.Color = _color
+		_image.Scale = _scale
+		Local r := _rotation - Pi / 2
+		canvas.DrawImage(_image, _position, r)
+		canvas.Color = Color.White
+	End
+	
+	Property Position:Vec2f()
+		Return _position
+	Setter (position:Vec2f)
+		_position = position
+	End
+	
+	Property Scale:Vec2f()
+		Return _scale
+	Setter (scale:Vec2f)
+		_scale = scale
+	End
+	
+	Property Rotation:Float()
+		Return _rotation
+	Setter (rotation:Float)
+		_rotation = rotation
+	End
+	
+	Property Image:Image()
+		Return _image
+	Setter (image:Image)
+		_image = image
 	End
 End

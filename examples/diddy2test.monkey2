@@ -1,6 +1,8 @@
 Namespace diddy2test
 
-#Import "<diddy2>"
+#Import "assets/"
+
+#Import "../diddy2"
 #Import "<mojo>"
 #Import "<std>"
 
@@ -9,14 +11,22 @@ Using mojo..
 Using std..
 
 Function Main()
-	New MyApp("Diddy 2!", 800, 600, False)
+	New MyDiddyApp("Diddy 2!", 800, 600, False)
 End
 
-Class MyApp Extends DiddyApp
+Class MyDiddyApp Extends DiddyApp
 	Method New(title:String, width:Int, height:Int, filterTextures:Bool = True)
 		Super.New(title, width, height, filterTextures)
+		LoadAssets()
 		CreateScreens()
 		Start(GetScreen("Title"))
+	End
+	
+	Method LoadAssets()
+		AssetBank.LoadImage("monkey2logoSmall-1.png")
+		AssetBank.LoadImage("diddy128.png")
+		
+		Print AssetBank.ToString()	
 	End
 	
 	Method CreateScreens()
@@ -26,20 +36,38 @@ Class MyApp Extends DiddyApp
 End
 
 Class TitleScreen Extends Screen
+	Field mx2Image:Image
+	Field diddy2Image:Image
+	
+	Field player:Sprite
+	
 	Method New(title:String)
 		Super.New(title)
 	End
 	
 	Method Start() Override
+		mx2Image = DiddyApp.AssetBank.GetImage("monkey2logoSmall-1.png")
+		diddy2Image = DiddyApp.AssetBank.GetImage("diddy128.png")
+		
+		player = New Sprite(mx2Image, New Vec2f(100, 100))
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
-		canvas.DrawText(name, 10, 10)
+		canvas.DrawText(Name, 10, 10)
+		canvas.DrawImage(mx2Image, DiddyApp.Window.VirtualResolution.X / 4 + DiddyApp.Window.VirtualResolution.X / 2, DiddyApp.Window.VirtualResolution.Y / 2)
+		canvas.DrawImage(diddy2Image, DiddyApp.Window.VirtualResolution.X / 4, DiddyApp.Window.VirtualResolution.Y / 2)
+		player.Render(canvas)
 	End
 	
 	Method Update(delta:Float) Override
-		If Keyboard.KeyHit(Key.Space)
-			MoveToScreen(DiddyWindow.GetWindow().screenBank.GetScreen("Game"))
+		If Keyboard.KeyDown(Key.Escape)
+			MoveToScreen(ScreenBank.GetScreen("Exit"))
+		End
+		
+		player.Rotation += 1 * delta
+		
+		If Keyboard.KeyDown(Key.Space)
+			MoveToScreen(ScreenBank.GetScreen("Game"))
 		End
 	End
 End
@@ -53,12 +81,12 @@ Class GameScreen Extends Screen
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
-		canvas.DrawText(name, 10, 10)
+		canvas.DrawText(Name, 10, 10)
 	End
 	
 	Method Update(delta:Float) Override
-		If Keyboard.KeyHit(Key.Space)
-			MoveToScreen(DiddyWindow.GetWindow().screenBank.GetScreen("Title"))
+		If Keyboard.KeyDown(Key.Space)
+			MoveToScreen(ScreenBank.GetScreen("Title"))
 		End
 	End
 End

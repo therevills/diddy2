@@ -1,8 +1,23 @@
 Namespace diddy2.screenbank
 
 Class ScreenBank Extends StringMap<Screen>
+Private
+	Field _diddyApp:DiddyApp
+	
+Public
+
+	Property DiddyApp:DiddyApp()
+		Return _diddyApp
+	End
+	
+	Method New(diddyApp:DiddyApp)
+		_diddyApp = diddyApp
+	End
+		
+
 	Method AddScreen(screen:Screen) 
-		Set(screen.name.ToUpper(), screen)
+		Set(screen.Name.ToUpper(), screen)
+		screen.ScreenBank = Self
 	End
 	
 	Method GetScreen:Screen(name:String)

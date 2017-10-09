@@ -1,78 +1,86 @@
 Namespace diddy2.screenfade
 
 Class ScreenFade
+
+Private
+	Field _fadeColor:Color = New Color(0, 0, 0)
+	Field _currentColor:Color = New Color(1, 1, 1)
+	Field _width:Int
+	Field _height:Int
+	Field _active:Bool
+	Field _ratio:Float = 0
+	Field _fadeType:Int
+	Field _fadeTime:Float = 1
+	Field _counter:Float
+	
+Public
 	Const FADE_IN:Int = 0
 	Const FADE_OUT:Int = 1
-	
-	Field active:Bool
-	Field ratio:Float = 0
-	Field fadeType:Int
-	Field fadeTime:Float = 1
-	Field counter:Float
-	
-	Field width:Int
-	Field height:Int
+		
+	Property Active:Bool()
+		Return _active
+	End		
 	
 	Method New(width:Int, height:Int)
-		Self.width = width
-		Self.height = height
+		Self._width = width
+		Self._height = height
 	End
 	
 	Method Start(fadeType:Int = FADE_IN, fadeTime:Float = 1)
-		If active Then Return
-		SetFadeTime(fadeTime)
-		active = True
+		If _active Then Return
+		SetFadeTime(_fadeTime)
+		_active = True
 		
-		Self.fadeType = fadeType
+		_fadeType = fadeType
 		
-		If fadeType = FADE_OUT
-			ratio = 1
+		If _fadeType = FADE_OUT
+			_ratio = 1
 		Else
-			ratio = 0	
+			_ratio = 0	
 		End
-		counter = 0
+		_counter = 0
 	End
 	
 	Method SetFadeTime(ms:Float)
-		Self.fadeTime = ms
+		_fadeTime = ms
 	End
 	
 	Method Update(delta:Float)
-		If Not active Return
+		If Not _active Return
 		
-		counter += 1 * delta
+		_counter += 1 * delta
 		CalcRatio()
 
-		If counter > fadeTime
-			active = False
-			If fadeType = FADE_OUT		
-				DiddyWindow.GetWindow().currentScreen.PostFadeOut()
+		If _counter > _fadeTime
+			_active = False
+			If _fadeType = FADE_OUT		
+				DiddyApp.GetInstance().GetCurrentScreen().PostFadeOut()
 			Else
-				DiddyWindow.GetWindow().currentScreen.PostFadeIn()
+				DiddyApp.GetInstance().GetCurrentScreen().PostFadeIn()
 			End
 		End
 	End
 		
 	Method CalcRatio()
-		ratio = counter / fadeTime
-		If ratio < 0
-			ratio = 0
+		_ratio = _counter / _fadeTime
+		If _ratio < 0
+			_ratio = 0
 		End
-		If ratio > 1
-			ratio = 1
+		If _ratio > 1
+			_ratio = 1
 		End
-		If fadeType = FADE_OUT
-			ratio = 1 - ratio
+		If _fadeType = FADE_OUT
+			_ratio = 1 - _ratio
 		End
 	End
 	
 	Method Render(canvas:Canvas)
-		If Not active Return
-		canvas.Color = New Color(0, 0, 0)
-		canvas.Alpha = 1 - ratio
-		canvas.DrawRect(0, 0, width, height)
+		If Not _active Return
+		canvas.Color = _fadeColor
+		canvas.Alpha = 1 - _ratio
+		canvas.DrawRect(0, 0, _width, _height)
 		canvas.Alpha = 1
-		canvas.Color = New Color(1, 1, 1)
+		canvas.Color = _currentColor
 	End
 	
 End

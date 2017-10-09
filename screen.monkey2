@@ -1,17 +1,37 @@
 Namespace diddy2.screen
 
 Class Screen Abstract
-	Field name:String = ""
-	Field destinationScreen:Screen
+Private
+	Field _name:String
+	Field _destinationScreen:Screen
+	Field _screenBank:ScreenBank
+	
+Public
+
+	Property ScreenBank:ScreenBank()
+		Return _screenBank
+	Setter(screenBank:ScreenBank)
+		_screenBank = screenBank
+	End
+	
+	Property DiddyApp:DiddyApp()
+		Return _screenBank.DiddyApp
+	End
+	
+	Property Name:String()
+		Return _name
+	Setter(name:String)
+		_name = name
+	End
 	
 	Method New(name:String = "")
-		Self.name = name
+		Self._name = name
 	End
 	
 	Method PreStart()
-		DiddyWindow.GetWindow().currentScreen = Self
+		DiddyApp.SetCurrentScreen(Self)
 		Load()
-		DiddyWindow.GetWindow().screenFade.Start()
+		DiddyApp.Window.ScreenFade.Start()
 		Start()
 	End
 	
@@ -29,23 +49,23 @@ Class Screen Abstract
 	
 	Method PostFadeOut()
 		Kill()
-		DiddyWindow.GetWindow().nextScreen.PreStart()
+		_screenBank.DiddyApp.Window.NextScreen.PreStart()
 	End
 	
 	Method Kill()
 	End
 	
 	Method SetDestinationScreen(screen:Screen)
-		destinationScreen = screen
+		_destinationScreen = screen
 	End
 	
 	Method MoveToScreen(screen:Screen, fadeTime:Float = 1)
-		If DiddyWindow.GetWindow().screenFade.active Then Return
-		DiddyWindow.GetWindow().nextScreen = screen
+		If DiddyApp.Window.ScreenFade.Active Then Return
+		DiddyApp.Window.NextScreen = screen
 		If fadeTime = 0 
-			DiddyWindow.GetWindow().currentScreen.PostFadeOut()
+			DiddyApp.GetCurrentScreen().PostFadeOut()
 		Else
-			DiddyWindow.GetWindow().screenFade.Start(ScreenFade.FADE_OUT, fadeTime)
+			DiddyApp.Window.ScreenFade.Start(ScreenFade.FADE_OUT, fadeTime)
 		End
 	End
 End
@@ -59,7 +79,7 @@ Class EmptyScreen Extends Screen
 	End
 	
 	Method Update(delta:Float) Override
-		MoveToScreen(destinationScreen, 0)
+		MoveToScreen(_destinationScreen, 0)
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
@@ -79,5 +99,6 @@ Class ExitScreen Extends Screen
 	End
 	
 	Method Update(delta:Float) Override
+		App.Terminate()
 	End
 End

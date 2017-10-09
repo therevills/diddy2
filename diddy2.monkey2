@@ -8,6 +8,7 @@ Namespace diddy2
 #Import "screen"
 #Import "screenfade"
 #Import "screenbank"
+#Import "assetbank"
 #Import "deltatiming"
 #Import "sprite"
 #Import "math"
@@ -18,5 +19,5 @@ Using diddy2..
 
 Private
 
-Function Main()
-End
+'Function Main()
+'End
