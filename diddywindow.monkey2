@@ -99,8 +99,8 @@ Public
 	
 	Method RenderDebug(canvas:Canvas)
 		If _debugOn
-			GameTime.ShowFPS(0, 60, canvas)
-			GameTime.ShowSpikeSuppression(0, 100, canvas)
+			GameTime.ShowFPS(0, canvas.Viewport.Height, canvas)
+			GameTime.ShowSpikeSuppression(canvas.Viewport.Width - 230, canvas.Viewport.Height, canvas)
 		End
 	End
 	

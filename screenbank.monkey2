@@ -24,7 +24,12 @@ Public
 		name = name.ToUpper()
 
 		Local s:Screen = Get(name)
-		If s = Null Then Print("Screen '" + name + "' not found in the ScreenBank")
+		If Not s
+			Print("Screen '" + name + "' not found in the ScreenBank")
+			Print(ToString())
+			App.Terminate()
+		End
+		
 		Return s
 	End
 	

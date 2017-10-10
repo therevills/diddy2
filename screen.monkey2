@@ -89,7 +89,7 @@ Class EmptyScreen Extends Screen
 	End
 	
 	Method Update(delta:Float) Override
-		MoveToScreen(_destinationScreen, 0)
+		MoveToScreen(_destinationScreen, 1)
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override

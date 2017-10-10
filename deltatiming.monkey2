@@ -23,6 +23,7 @@ Class DeltaTimer
 	End
 End
 
+' http://www.rightanglegames.com/top-down-shooter-tutorial-with-blitzmax.html
 Class FixedRateLogicTimer
 	Field newTime:Double = Millisecs()
 	Field oldTime:Double = Millisecs()
@@ -102,16 +103,24 @@ Class FixedRateLogicTimer
 	End
 
 	Method ShowSpikeSuppression(x:Int, y:Int, canvas:Canvas)
-		canvas.DrawText("Delta Spike Suppressor:", x, y)
-		canvas.DrawText("Final Delta: " + delta, x, y + 20)
+		Local ty:Int = y - (canvas.Font.Height * (3 + Self.dssLenArray))
+		canvas.DrawText("Delta Spike Suppressor:", x, ty)
+		ty += canvas.Font.Height
+		For Local i:Int = 0 To Self.dssLenArray - 1
+			canvas.DrawText(dssArray[i], x, ty)
+			ty += canvas.Font.Height
+		Next
+		
+		ty += canvas.Font.Height
+		canvas.DrawText("Final Delta: " + delta, x, ty)
 	End
 	
 	Method ShowFPS(x:Int, y:Int, canvas:Canvas, showUpdateFPS:Int = True, showRenderFPS:Int = True)
-		Local ty:Int = y
+		Local ty:Int = y - (canvas.Font.Height * 2)
 		
 		If showUpdateFPS
 			canvas.DrawText("Logic FPS:  " + updatesPerSecond, x, ty)
-			ty += 20
+			ty += canvas.Font.Height
 		End
 		If showRenderFPS
 			canvas.DrawText("Render FPS: " + rendersPerSecond, x, ty)

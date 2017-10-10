@@ -20,7 +20,7 @@ Class MyDiddyApp Extends DiddyApp
 		SetDebug(True)
 		LoadAssets()
 		CreateScreens()
-		Start(GetScreen("Title"))
+		Start(GetScreen("TitleScreen"))
 	End
 	
 	Method LoadAssets()
@@ -29,8 +29,8 @@ Class MyDiddyApp Extends DiddyApp
 	End
 	
 	Method CreateScreens()
-		AddScreen(New TitleScreen("Title"))
-		AddScreen(New GameScreen("Game"))
+		AddScreen(New TitleScreen("TitleScreen"))
+		AddScreen(New GameScreen("GameScreen"))
 	End
 End
 
@@ -48,25 +48,30 @@ Class TitleScreen Extends Screen
 		mx2Image = DiddyApp.AssetBank.GetImage("monkey2logoSmall-1.png")
 		diddy2Image = DiddyApp.AssetBank.GetImage("diddy128.png")
 		
-		player = New Sprite(mx2Image, New Vec2f(100, 100))
+		player = New Sprite(mx2Image, New Vec2f(DiddyApp.Window.VirtualResolution.X / 2, DiddyApp.Window.VirtualResolution.Y / 2))
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
 		canvas.DrawText(Name, 10, 10)
-		canvas.DrawImage(mx2Image, DiddyApp.Window.VirtualResolution.X / 4 + DiddyApp.Window.VirtualResolution.X / 2, DiddyApp.Window.VirtualResolution.Y / 2)
-		canvas.DrawImage(diddy2Image, DiddyApp.Window.VirtualResolution.X / 4, DiddyApp.Window.VirtualResolution.Y / 2)
+		canvas.DrawImage(mx2Image, DiddyApp.Window.VirtualResolution.X / 4 + DiddyApp.Window.VirtualResolution.X / 2, DiddyApp.Window.VirtualResolution.Y / 4)
+		canvas.DrawImage(diddy2Image, DiddyApp.Window.VirtualResolution.X / 4, DiddyApp.Window.VirtualResolution.Y / 4)
 		player.Render(canvas)
+		
+		canvas.DrawText("Press Space to move to the GameScreen", DiddyApp.Window.VirtualResolution.X / 2, 10, .5)
 	End
 	
 	Method Update(delta:Float) Override
+		player.Rotation += 1 * delta
+		player.Alpha -= 0.1 * delta
+		player.Colour = New Color(Rnd(0,1), Rnd(0,1), Rnd(0,1))
+		
+		
 		If Keyboard.KeyDown(Key.Escape)
 			MoveToScreen(ScreenBank.GetScreen("Exit"))
 		End
 		
-		player.Rotation += 1 * delta
-		
 		If Keyboard.KeyDown(Key.Space)
-			MoveToScreen(ScreenBank.GetScreen("Game"))
+			MoveToScreen(ScreenBank.GetScreen("GameScreen"))
 		End
 	End
 End
@@ -85,7 +90,7 @@ Class GameScreen Extends Screen
 	
 	Method Update(delta:Float) Override
 		If Keyboard.KeyDown(Key.Space)
-			MoveToScreen(ScreenBank.GetScreen("Title"))
+			MoveToScreen(ScreenBank.GetScreen("TitleScreen"))
 		End
 	End
 End
