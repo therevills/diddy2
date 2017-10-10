@@ -5,6 +5,7 @@ Private
 	Field _name:String
 	Field _destinationScreen:Screen
 	Field _screenBank:ScreenBank
+	Field _allowUpdatesInFade:Bool = False
 	
 Public
 
@@ -23,7 +24,13 @@ Public
 	Setter(name:String)
 		_name = name
 	End
-	
+  
+	Property AllowUpdatesInFade:Bool()
+		Return _allowUpdatesInFade
+	Setter(b:Bool)
+		_allowUpdatesInFade = b
+	End
+  
 	Method New(name:String = "")
 		Self._name = name
 	End
@@ -71,11 +78,14 @@ Public
 End
 
 Class EmptyScreen Extends Screen
+	Field cleared:Bool = False
+	
 	Method New(name:String)
 		Super.New(name)
 	End
 	
 	Method Start() Override
+		
 	End
 	
 	Method Update(delta:Float) Override
@@ -83,7 +93,10 @@ Class EmptyScreen Extends Screen
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
-		canvas.Clear(Color.Black)
+		If Not cleared
+			canvas.Clear(Color.Black)
+			cleared = True
+		End
 	End
 End
 
@@ -93,6 +106,7 @@ Class ExitScreen Extends Screen
 	End
 	
 	Method Start() Override
+		AllowUpdatesInFade = True
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override

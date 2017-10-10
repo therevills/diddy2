@@ -48,4 +48,8 @@ Public
 	Method SetCurrentScreen(screen:Screen)
 		_window.CurrentScreen = screen
 	End
+  
+	Method SetDebug(debugOn:Bool)
+		_window.DebugOn = debugOn
+	End
 End

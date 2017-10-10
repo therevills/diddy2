@@ -23,7 +23,6 @@ Public
 	
 	Method GetImage:Image(name:String)
 		name = name.ToUpper()
-		Print "Getting asset " + name
 		Local asset:Asset = Get(name)
 		
 		Local imageAsset:ImageAsset = Cast<ImageAsset>(asset)

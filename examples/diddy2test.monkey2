@@ -17,6 +17,7 @@ End
 Class MyDiddyApp Extends DiddyApp
 	Method New(title:String, width:Int, height:Int, filterTextures:Bool = True)
 		Super.New(title, width, height, filterTextures)
+		SetDebug(True)
 		LoadAssets()
 		CreateScreens()
 		Start(GetScreen("Title"))
@@ -24,9 +25,7 @@ Class MyDiddyApp Extends DiddyApp
 	
 	Method LoadAssets()
 		AssetBank.LoadImage("monkey2logoSmall-1.png")
-		AssetBank.LoadImage("diddy128.png")
-		
-		Print AssetBank.ToString()	
+		AssetBank.LoadImage("diddy128.png")	
 	End
 	
 	Method CreateScreens()

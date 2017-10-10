@@ -43,7 +43,6 @@ Class FixedRateLogicTimer
 	
 	Method New(logicCyclesPerSecond:Float, numSamples:Int = 0)
 		logicFPS = 1.0 / logicCyclesPerSecond
-		Print "logicFPS = " + logicFPS
 		If numSamples
 			dssOn = True
 			dssArray = New Float[numSamples]

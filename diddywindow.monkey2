@@ -62,6 +62,12 @@ Public
 		_currentScreen = screen
 	End	
 	
+	Property DebugOn:Bool()
+		Return _debugOn
+	Setter (debugOn:Bool)
+		_debugOn = debugOn
+	End	
+  
 	Method GenerateSeed()
 		SeedRnd(Millisecs())
 	End
@@ -77,7 +83,9 @@ Public
 			_screenFade.Update(delta)
 		End
 		If _currentScreen
-			If Not _screenFade.Active Then _currentScreen.Update(delta)
+			If Not _screenFade.Active Or _currentScreen.AllowUpdatesInFade
+				_currentScreen.Update(delta)
+			End
 		End
 	End
 	
