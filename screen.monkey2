@@ -19,6 +19,14 @@ Public
 		Return _screenBank.DiddyApp
 	End
 	
+	Property Window:DiddyWindow()
+		Return _screenBank.DiddyApp.Window
+	End
+	
+	Property AssetBank:AssetBank()
+		Return _screenBank.DiddyApp.AssetBank
+	End
+	
 	Property Name:String()
 		Return _name
 	Setter(name:String)
@@ -35,44 +43,47 @@ Public
 		Self._name = name
 	End
 	
-	Method PreStart()
+	Method PreStart(fadeType:Int = ScreenFade.FADE_IN)
 		DiddyApp.SetCurrentScreen(Self)
 		Load()
-		DiddyApp.Window.ScreenFade.Start()
+		Window.ScreenFade.Start(fadeType)
 		Start()
 	End
 	
-	Method PostFadeIn()
+	Method PostFadeIn() Virtual
 	End
 	
-	Method Load()
+	Method Load() Virtual
 	End
 	
 	Method Start() Abstract
 	
 	Method Render(canvas:Canvas, tween:Float) Abstract
 	
+	Method PostRender(canvas:Canvas, tween:Float) Virtual
+	End
+	
 	Method Update(delta:Float) Abstract
 	
 	Method PostFadeOut()
 		Kill()
-		_screenBank.DiddyApp.Window.NextScreen.PreStart()
+		Window.NextScreen.PreStart()
 	End
 	
-	Method Kill()
+	Method Kill() Virtual
 	End
 	
 	Method SetDestinationScreen(screen:Screen)
 		_destinationScreen = screen
 	End
 	
-	Method MoveToScreen(screen:Screen, fadeTime:Float = 1)
-		If DiddyApp.Window.ScreenFade.Active Then Return
-		DiddyApp.Window.NextScreen = screen
-		If fadeTime = 0 
+	Method MoveToScreen(screen:Screen, fadeTime:Float = 500)
+		If Window.ScreenFade.Active Then Return
+		Window.NextScreen = screen
+		If fadeTime <= 0 
 			DiddyApp.GetCurrentScreen().PostFadeOut()
 		Else
-			DiddyApp.Window.ScreenFade.Start(ScreenFade.FADE_OUT, fadeTime)
+			Window.ScreenFade.Start(ScreenFade.FADE_OUT, fadeTime)
 		End
 	End
 End
@@ -89,7 +100,6 @@ Class EmptyScreen Extends Screen
 	End
 	
 	Method Update(delta:Float) Override
-		MoveToScreen(_destinationScreen, 1)
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override

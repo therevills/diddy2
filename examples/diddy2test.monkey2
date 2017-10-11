@@ -45,26 +45,25 @@ Class TitleScreen Extends Screen
 	End
 	
 	Method Start() Override
-		mx2Image = DiddyApp.AssetBank.GetImage("monkey2logoSmall-1.png")
-		diddy2Image = DiddyApp.AssetBank.GetImage("diddy128.png")
+		mx2Image = AssetBank.GetImage("monkey2logoSmall-1.png")
+		diddy2Image = AssetBank.GetImage("diddy128.png")
 		
-		player = New Sprite(mx2Image, New Vec2f(DiddyApp.Window.VirtualResolution.X / 2, DiddyApp.Window.VirtualResolution.Y / 2))
+		player = New Sprite(mx2Image, New Vec2f(Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 2))
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
 		canvas.DrawText(Name, 10, 10)
-		canvas.DrawImage(mx2Image, DiddyApp.Window.VirtualResolution.X / 4 + DiddyApp.Window.VirtualResolution.X / 2, DiddyApp.Window.VirtualResolution.Y / 4)
-		canvas.DrawImage(diddy2Image, DiddyApp.Window.VirtualResolution.X / 4, DiddyApp.Window.VirtualResolution.Y / 4)
+		canvas.DrawImage(mx2Image, Window.VirtualResolution.X / 4 + Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 4)
+		canvas.DrawImage(diddy2Image, Window.VirtualResolution.X / 4, Window.VirtualResolution.Y / 4)
 		player.Render(canvas)
 		
-		canvas.DrawText("Press Space to move to the GameScreen", DiddyApp.Window.VirtualResolution.X / 2, 10, .5)
+		canvas.DrawText("Press Space to move to the GameScreen", Window.VirtualResolution.X / 2, 10, .5)
 	End
 	
 	Method Update(delta:Float) Override
 		player.Rotation += 1 * delta
 		player.Alpha -= 0.1 * delta
 		player.Colour = New Color(Rnd(0,1), Rnd(0,1), Rnd(0,1))
-		
 		
 		If Keyboard.KeyDown(Key.Escape)
 			MoveToScreen(ScreenBank.GetScreen("Exit"))

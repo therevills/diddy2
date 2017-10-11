@@ -28,21 +28,24 @@ Class FixedRateLogicTimer
 	Field newTime:Double = Millisecs()
 	Field oldTime:Double = Millisecs()
 	Field delta:Float
-	Field dssOn:Int		' do we use delta spike suppression?
+	Field dssOn:Int			' do we use delta spike suppression?
 	Field dssIndex:Int		' index into DSS_Array where next delta value is written
 	Field dssArray:Float[]	' this array contains the delta values to smooth
 	Field dssLenArray:Int	' how big is the array of delta values
 
 	Field logicFPS:Float
-	Field accumulator:Float, tween:Float
+	Field accumulator:Float
+	Field tween:Float
 	
 	Field fpsAccumulator:Float
 	Field updateCount:Int
 	Field renderCount:Int
 	Field updatesPerSecond:Int
 	Field rendersPerSecond:Int
+	Field logicCyclesPerSecond:Float
 	
 	Method New(logicCyclesPerSecond:Float, numSamples:Int = 0)
+		Self.logicCyclesPerSecond = logicCyclesPerSecond
 		logicFPS = 1.0 / logicCyclesPerSecond
 		If numSamples
 			dssOn = True
@@ -91,6 +94,10 @@ Class FixedRateLogicTimer
 			Return True
 		End
 		Return False
+	End
+	
+	Method CalcFrameTime:Float(ms:Float)
+		Return 	ms / logicCyclesPerSecond / 10.0
 	End
 	
 	Method GetLogicFPS:Float()

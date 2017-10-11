@@ -26,15 +26,19 @@ Public
 		Self._height = height
 	End
 	
-	Method Start(fadeType:Int = FADE_IN, fadeTime:Float = 1)
+	Method Start(fadeType:Int = FADE_IN, fadeTime:Float = 500)
 		If _active Then Return
-		SetFadeTime(_fadeTime)
+		SetFadeTime(fadeTime)
 		_active = True
 		
 		_fadeType = fadeType
 		
 		If _fadeType = FADE_OUT
 			_ratio = 1
+			If Not DiddyApp.GetInstance().Window.NextScreen
+				Print "NextScreen is NULL, set NextScreen before calling Start with FADE_OUT"
+				App.Terminate()
+			End
 		Else
 			_ratio = 0	
 		End
@@ -42,12 +46,13 @@ Public
 	End
 	
 	Method SetFadeTime(ms:Float)
+		ms = DiddyApp.GetInstance().Window.GameTime.CalcFrameTime(ms)
 		_fadeTime = ms
 	End
 	
 	Method Update(delta:Float)
 		If Not _active Return
-		
+
 		_counter += 1 * delta
 		CalcRatio()
 

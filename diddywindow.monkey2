@@ -17,7 +17,7 @@ Public
 	Const UPDATE_FREQUENCY:Float = 100.0
 	Const SPIKE_SUPPRESSION:Int = 20
 	
-	Global GameTime:FixedRateLogicTimer = New FixedRateLogicTimer(UPDATE_FREQUENCY, SPIKE_SUPPRESSION)
+	Global GameTime:FixedRateLogicTimer
 	Global instance:DiddyWindow = null
 
 	Method New(title:String, width:Int, height:Int, filterTextures:Bool = True, flags:WindowFlags = WindowFlags.Resizable)
@@ -30,6 +30,7 @@ Public
 		GenerateSeed()
 		ClearColor = Color.Black
 		instance = Self
+		GameTime = New FixedRateLogicTimer(UPDATE_FREQUENCY, SPIKE_SUPPRESSION)
 	End
 	
 	Method CreateScreenBank(app:DiddyApp)
@@ -74,8 +75,8 @@ Public
 	
 	Method Start(screen:Screen)
 		Local s:Screen = _screenBank.GetScreen("Empty")
-		s.SetDestinationScreen(screen)
-		s.PreStart()
+		NextScreen = screen
+		s.PreStart(ScreenFade.FADE_OUT)
 	End
 	
 	Method GameLogic(delta:Float)
@@ -93,7 +94,12 @@ Public
 		If _currentScreen
 			_currentScreen.Render(canvas, tween)
 		End
-		If _screenFade.Active Then _screenFade.Render(canvas)
+		If _screenFade.Active
+			_screenFade.Render(canvas)
+		End
+		If _currentScreen
+			_currentScreen.PostRender(canvas, tween)
+		End
 		RenderDebug(canvas)
 	End
 	
