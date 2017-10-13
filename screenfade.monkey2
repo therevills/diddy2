@@ -16,7 +16,9 @@ Private
 Public
 	Const FADE_IN:Int = 0
 	Const FADE_OUT:Int = 1
-		
+	Global DefaultFadeTimeMs:Float = 300
+	Field startMs:Int 
+	
 	Property Active:Bool()
 		Return _active
 	End		
@@ -26,12 +28,12 @@ Public
 		Self._height = height
 	End
 	
-	Method Start(fadeType:Int = FADE_IN, fadeTime:Float = 500)
+	Method Start(fadeType:Int = FADE_IN, fadeTimeMs:Float = DefaultFadeTimeMs)
 		If _active Then Return
-		SetFadeTime(fadeTime)
 		_active = True
-		
+		SetFadeTime(fadeTimeMs)
 		_fadeType = fadeType
+		startMs = Millisecs()
 		
 		If _fadeType = FADE_OUT
 			_ratio = 1
@@ -46,17 +48,18 @@ Public
 	End
 	
 	Method SetFadeTime(ms:Float)
-		ms = DiddyApp.GetInstance().Window.GameTime.CalcFrameTime(ms)
-		_fadeTime = ms
+		Local gt:Float = DiddyApp.GetInstance().Window.GameTime.CalcFrameTime(ms)
+		_fadeTime = gt
 	End
 	
 	Method Update(delta:Float)
 		If Not _active Return
 
-		_counter += 1 * delta
+		_counter += 1 + delta
 		CalcRatio()
-
 		If _counter > _fadeTime
+			Local endMs:Int = Millisecs()
+			Print "FT: " + (endMs - startMs)
 			_active = False
 			If _fadeType = FADE_OUT		
 				DiddyApp.GetInstance().GetCurrentScreen().PostFadeOut()

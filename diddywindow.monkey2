@@ -15,7 +15,7 @@ Private
 	
 Public
 	Const UPDATE_FREQUENCY:Float = 100.0
-	Const SPIKE_SUPPRESSION:Int = 20
+	Const SPIKE_SUPPRESSION:Int = 10
 	
 	Global GameTime:FixedRateLogicTimer
 	Global instance:DiddyWindow = null
@@ -75,8 +75,10 @@ Public
 	
 	Method Start(screen:Screen)
 		Local s:Screen = _screenBank.GetScreen("Empty")
+		s.SetDestinationScreen(screen)
+		s.AllowUpdatesInFade = True
 		NextScreen = screen
-		s.PreStart(ScreenFade.FADE_OUT)
+		s.PreStart(ScreenFade.FADE_IN, 0)
 	End
 	
 	Method GameLogic(delta:Float)

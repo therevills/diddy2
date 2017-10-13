@@ -43,10 +43,10 @@ Public
 		Self._name = name
 	End
 	
-	Method PreStart(fadeType:Int = ScreenFade.FADE_IN)
+	Method PreStart(fadeType:Int = ScreenFade.FADE_IN, fadeTimeMs:Float = ScreenFade.DefaultFadeTimeMs)
 		DiddyApp.SetCurrentScreen(Self)
 		Load()
-		Window.ScreenFade.Start(fadeType)
+		Window.ScreenFade.Start(fadeType, fadeTimeMs)
 		Start()
 	End
 	
@@ -77,13 +77,13 @@ Public
 		_destinationScreen = screen
 	End
 	
-	Method MoveToScreen(screen:Screen, fadeTime:Float = 500)
+	Method MoveToScreen(screen:Screen, fadeTimeMs:Float = ScreenFade.DefaultFadeTimeMs)
 		If Window.ScreenFade.Active Then Return
 		Window.NextScreen = screen
-		If fadeTime <= 0 
+		If fadeTimeMs <= 0 
 			DiddyApp.GetCurrentScreen().PostFadeOut()
 		Else
-			Window.ScreenFade.Start(ScreenFade.FADE_OUT, fadeTime)
+			Window.ScreenFade.Start(ScreenFade.FADE_OUT, fadeTimeMs)
 		End
 	End
 End
@@ -96,10 +96,10 @@ Class EmptyScreen Extends Screen
 	End
 	
 	Method Start() Override
-		
 	End
 	
 	Method Update(delta:Float) Override
+		MoveToScreen(_destinationScreen, 0)
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
@@ -107,6 +107,7 @@ Class EmptyScreen Extends Screen
 			canvas.Clear(Color.Black)
 			cleared = True
 		End
+		canvas.DrawText("TEST!", 100, 100)
 	End
 End
 

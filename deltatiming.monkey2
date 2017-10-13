@@ -97,7 +97,15 @@ Class FixedRateLogicTimer
 	End
 	
 	Method CalcFrameTime:Float(ms:Float)
-		Return 	ms / logicCyclesPerSecond / 10.0
+		Local amount:Float = updatesPerSecond
+		If amount = 0
+			amount = logicCyclesPerSecond
+		End
+		' convert Hz to ms
+		Local msPerFrame:Float = 1000.0 / amount
+		' convert ms to frame time
+		Local rv:Float = ms / msPerFrame
+		Return rv
 	End
 	
 	Method GetLogicFPS:Float()

@@ -39,6 +39,7 @@ Class TitleScreen Extends Screen
 	Field diddy2Image:Image
 	
 	Field player:Sprite
+	Field fade:Bool = True
 	
 	Method New(title:String)
 		Super.New(title)
@@ -62,7 +63,21 @@ Class TitleScreen Extends Screen
 	
 	Method Update(delta:Float) Override
 		player.Rotation += 1 * delta
-		player.Alpha -= 0.1 * delta
+		Local fadeSpeed:Float = 0.2
+		If fade
+			player.Alpha -= fadeSpeed * delta
+			player.Scale -= fadeSpeed * delta
+			If player.Alpha <= 0
+				fade = Not fade
+			End
+		Else
+			player.Alpha += fadeSpeed * delta
+			player.Scale += fadeSpeed * delta
+			If player.Alpha >= 1
+				fade = Not fade
+			End
+		End
+		
 		player.Colour = New Color(Rnd(0,1), Rnd(0,1), Rnd(0,1))
 		
 		If Keyboard.KeyDown(Key.Escape)
