@@ -17,8 +17,7 @@ Public
 	Const FADE_IN:Int = 0
 	Const FADE_OUT:Int = 1
 	Global DefaultFadeTimeMs:Float = 300
-	Field startMs:Int 
-	
+
 	Property Active:Bool()
 		Return _active
 	End		
@@ -33,8 +32,7 @@ Public
 		_active = True
 		SetFadeTime(fadeTimeMs)
 		_fadeType = fadeType
-		startMs = Millisecs()
-		
+
 		If _fadeType = FADE_OUT
 			_ratio = 1
 			If Not DiddyApp.GetInstance().Window.NextScreen
@@ -58,8 +56,6 @@ Public
 		_counter += 1 + delta
 		CalcRatio()
 		If _counter > _fadeTime
-			Local endMs:Int = Millisecs()
-			Print "FT: " + (endMs - startMs)
 			_active = False
 			If _fadeType = FADE_OUT		
 				DiddyApp.GetInstance().GetCurrentScreen().PostFadeOut()

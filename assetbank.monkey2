@@ -21,6 +21,17 @@ Public
 		Set(fileName.ToUpper(), imageAsset)
 	End
 	
+	Method LoadSound(fileName:String)
+		Local path:String = _prefix + _soundPath + fileName
+		Local sound:Sound = Sound.Load(path)
+		If Not sound
+			Print("Error: Can not load sound: " + path)
+			App.Terminate()
+		End
+		Local soundAsset := New SoundAsset(fileName.ToUpper(), sound)
+		Set(fileName.ToUpper(), soundAsset)
+	End
+	
 	Method GetImage:Image(name:String)
 		name = name.ToUpper()
 		Local asset:Asset = Get(name)
@@ -28,6 +39,15 @@ Public
 		Local imageAsset:ImageAsset = Cast<ImageAsset>(asset)
 		If imageAsset = Null Then Print("Image '" + name + "' not found in the AssetBank")
 		Return imageAsset.RawImage
+	End
+	
+	Method GetSound:Sound(name:String)
+		name = name.ToUpper()
+		Local asset:Asset = Get(name)
+		
+		Local soundAsset:SoundAsset = Cast<SoundAsset>(asset)
+		If soundAsset = Null Then Print("Sound '" + name + "' not found in the AssetBank")
+		Return soundAsset.RawSound
 	End
 	
 	Method ToString:String()
@@ -65,5 +85,20 @@ Public
 	Method New(name:String, image:Image)
 		Super.New(name)
 		Self._rawImage = image
+	End
+End
+
+Class SoundAsset Extends Asset
+Private
+	Field _rawSound:Sound
+		
+Public
+	Property RawSound:Sound()
+		Return Self._rawSound
+	End
+	
+	Method New(name:String, sound:Sound)
+		Super.New(name)
+		Self._rawSound = sound
 	End
 End

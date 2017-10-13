@@ -26,6 +26,8 @@ Class MyDiddyApp Extends DiddyApp
 	Method LoadAssets()
 		AssetBank.LoadImage("monkey2logoSmall-1.png")
 		AssetBank.LoadImage("diddy128.png")	
+		
+		AssetBank.LoadSound("shoot.ogg")
 	End
 	
 	Method CreateScreens()
@@ -37,8 +39,10 @@ End
 Class TitleScreen Extends Screen
 	Field mx2Image:Image
 	Field diddy2Image:Image
+	Field shootSound:Sound
 	
 	Field player:Sprite
+	
 	Field fade:Bool = True
 	
 	Method New(title:String)
@@ -48,6 +52,7 @@ Class TitleScreen Extends Screen
 	Method Start() Override
 		mx2Image = AssetBank.GetImage("monkey2logoSmall-1.png")
 		diddy2Image = AssetBank.GetImage("diddy128.png")
+		shootSound = AssetBank.GetSound("shoot.ogg")
 		
 		player = New Sprite(mx2Image, New Vec2f(Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 2))
 	End
@@ -86,6 +91,7 @@ Class TitleScreen Extends Screen
 		
 		If Keyboard.KeyDown(Key.Space)
 			MoveToScreen(ScreenBank.GetScreen("GameScreen"))
+			shootSound.Play()
 		End
 	End
 End
