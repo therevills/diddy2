@@ -11,6 +11,7 @@ Namespace diddy2
 #Import "assetbank"
 #Import "deltatiming"
 #Import "sprite"
+#Import "channelmanager"
 #Import "math"
 
 Using std..

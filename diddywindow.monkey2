@@ -109,6 +109,13 @@ Public
 		If _debugOn
 			GameTime.ShowFPS(0, canvas.Viewport.Height, canvas)
 			GameTime.ShowSpikeSuppression(canvas.Viewport.Width - 230, canvas.Viewport.Height, canvas)
+			
+			Local x:Int = 0
+			Local y:Int = 0
+			Local gap:Int = canvas.Font.Height
+			canvas.DrawText("Sound Volume: " + DiddyApp.GetInstance().SoundVolume, x, y)
+			y += gap
+			canvas.DrawText("Music Volume: " + DiddyApp.GetInstance().MusicVolume, x, y)
 		End
 	End
 	

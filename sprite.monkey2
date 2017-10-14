@@ -57,8 +57,7 @@ Public
 	Property Alpha:Float()
 		Return _alpha
 	Setter (alpha:Float)
-		If alpha < 0 alpha = 0
-		If alpha > 1 alpha = 1
+		alpha = Clamp(alpha, 0.0, 1.0)
 		_alpha = alpha
 	End
 

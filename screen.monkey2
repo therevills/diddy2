@@ -27,6 +27,10 @@ Public
 		Return _screenBank.DiddyApp.AssetBank
 	End
 	
+	Property ChannelManager:ChannelManager()
+		Return _screenBank.DiddyApp.ChannelManager
+	End
+	
 	Property Name:String()
 		Return _name
 	Setter(name:String)

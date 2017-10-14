@@ -5,7 +5,9 @@ Private
 	Global _Instance:DiddyApp = null
 	Field _window:DiddyWindow
 	Field _assetBank:AssetBank
-	
+	Field _channelManager:ChannelManager
+	Field _soundVolume:Float = 1
+	Field _musicVolume:Float = 1
 Public
 	
 	Method New( title:String, width:Int, height:Int, filterTextures:Bool = True, flags:WindowFlags = WindowFlags.Resizable )
@@ -13,6 +15,7 @@ Public
 		_Instance = Self
 		_window = New DiddyWindow(title, width, height, filterTextures, flags)
 		_assetBank = New AssetBank
+		_channelManager = New ChannelManager
 		_window.CreateScreenBank(_Instance)
 	End
 
@@ -20,8 +23,30 @@ Public
 		Return _Instance
 	End
 
+	Property SoundVolume:Float()
+		Return _soundVolume
+	Setter(amount:Float)
+		amount = Clamp(amount, 0.0, 1.0)
+		_soundVolume = amount
+		For Local i:Int = 0 Until ChannelManager.MAX_CHANNELS
+			ChannelManager.SetChannelVolume(_soundVolume, i)
+		Next
+	End
+
+	Property MusicVolume:Float()
+		Return _musicVolume
+	Setter(amount:Float)
+		amount = Clamp(amount, 0.0, 1.0)
+		_musicVolume = amount
+		ChannelManager.SetMusicVolume(_musicVolume)
+	End
+	
 	Property AssetBank:AssetBank()
 		Return _assetBank
+	End
+	
+	Property ChannelManager:ChannelManager()
+		Return _channelManager
 	End
 	
 	Property Window:DiddyWindow()

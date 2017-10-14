@@ -12,11 +12,12 @@ Private
 	Field _fadeType:Int
 	Field _fadeTime:Float = 1
 	Field _counter:Float
-	
+	Field _fadeMusic:Bool
+	Field _fadeSound:Bool
 Public
 	Const FADE_IN:Int = 0
 	Const FADE_OUT:Int = 1
-	Global DefaultFadeTimeMs:Float = 300
+	Global DefaultFadeTimeMs:Float = 500
 
 	Property Active:Bool()
 		Return _active
@@ -27,12 +28,14 @@ Public
 		Self._height = height
 	End
 	
-	Method Start(fadeType:Int = FADE_IN, fadeTimeMs:Float = DefaultFadeTimeMs)
+	Method Start(fadeType:Int = FADE_IN, fadeTimeMs:Float = DefaultFadeTimeMs, fadeSound:Bool = True, fadeMusic:Bool = True)
 		If _active Then Return
 		_active = True
 		SetFadeTime(fadeTimeMs)
 		_fadeType = fadeType
-
+		_fadeMusic = fadeMusic
+		_fadeSound = fadeSound
+		
 		If _fadeType = FADE_OUT
 			_ratio = 1
 			If Not DiddyApp.GetInstance().Window.NextScreen
@@ -55,6 +58,16 @@ Public
 
 		_counter += 1 + delta
 		CalcRatio()
+		
+		If _fadeSound
+			For Local i:Int = 0 Until ChannelManager.MAX_CHANNELS
+				DiddyApp.GetInstance().ChannelManager.SetChannelVolume(_ratio * DiddyApp.GetInstance().SoundVolume, i)
+			Next
+		End
+		If _fadeMusic
+			DiddyApp.GetInstance().ChannelManager.SetMusicVolume(_ratio * DiddyApp.GetInstance().MusicVolume)
+		End
+		
 		If _counter > _fadeTime
 			_active = False
 			If _fadeType = FADE_OUT		
@@ -67,12 +80,8 @@ Public
 		
 	Method CalcRatio()
 		_ratio = _counter / _fadeTime
-		If _ratio < 0
-			_ratio = 0
-		End
-		If _ratio > 1
-			_ratio = 1
-		End
+		_ratio = Clamp(_ratio, 0.0, 1.0)
+
 		If _fadeType = FADE_OUT
 			_ratio = 1 - _ratio
 		End
