@@ -64,14 +64,12 @@ Class ChannelManager
 			ChannelState[channel] = 0
 		End
 		
-		If pan < -1 Then pan = -1
-		If pan > 1 Then pan = 1
+		pan = Clamp(pan, -1.0, 1.0)
 		If volume = -1
 			volume = DiddyApp.GetInstance().SoundVolume
 		End
-		If volume < 0 Then volume = 0
-		If volume > 1 Then volume = 1
-		
+		volume = Clamp(volume, 0.0, 1.0)
+
 		ChannelArray[ChannelIndex].Stop()
 		ChannelArray[ChannelIndex].Play(s, loop)
 		ChannelArray[ChannelIndex].Pan = pan
