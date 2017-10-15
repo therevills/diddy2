@@ -113,9 +113,11 @@ Public
 			Local x:Int = 0
 			Local y:Int = 0
 			Local gap:Int = canvas.Font.Height
-			canvas.DrawText("Sound Volume: " + DiddyApp.GetInstance().SoundVolume, x, y)
+			canvas.DrawText("Current Screen: " + _currentScreen.Name, x, y)
 			y += gap
-			canvas.DrawText("Music Volume: " + DiddyApp.GetInstance().MusicVolume, x, y)
+			canvas.DrawText("Sound Volume  : " + DiddyApp.GetInstance().SoundVolume, x, y)
+			y += gap
+			canvas.DrawText("Music Volume  : " + DiddyApp.GetInstance().MusicVolume, x, y)
 		End
 	End
 	

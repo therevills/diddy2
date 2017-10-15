@@ -66,7 +66,6 @@ Class TitleScreen Extends Screen
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
-		canvas.DrawText(Name, 10, 10)
 		canvas.DrawImage(mx2Image, Window.VirtualResolution.X / 4 + Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 4)
 		canvas.DrawImage(diddy2Image, Window.VirtualResolution.X / 4, Window.VirtualResolution.Y / 4)
 		player.Render(canvas)
@@ -172,7 +171,6 @@ Class GameScreen Extends Screen
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
-		canvas.DrawText(Name, 10, 10)
 	End
 	
 	Method PostRender(canvas:Canvas, tween:Float) Override
