@@ -170,7 +170,7 @@ Private
 	Field _name:String
 		
 Public
-Property Name:String()
+	Property Name:String()
 		Return _name
 	End
 	

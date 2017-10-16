@@ -17,7 +17,7 @@ End
 Class MyDiddyApp Extends DiddyApp
 	Method New(title:String, width:Int, height:Int, filterTextures:Bool = True)
 		Super.New(title, width, height, filterTextures)
-		SetDebug(True)
+		'SetDebug(True)
 		LoadAssets()
 		CreateScreens()
 		Start(GetScreen("TitleScreen"))
@@ -26,6 +26,7 @@ Class MyDiddyApp Extends DiddyApp
 	Method LoadAssets()
 		AssetBank.LoadImage("monkey2logoSmall-1.png")
 		AssetBank.LoadImage("diddy128.png")	
+		AssetBank.LoadAtlas("gripe.xml", AssetBank.SPARROW_ATLAS)
 		
 		AssetBank.LoadSound("shoot.ogg")
 		AssetBank.LoadSound("GraveyardShift.ogg")
@@ -43,7 +44,7 @@ Class TitleScreen Extends Screen
 	Field shootSound:Sound
 	Field music:Sound
 	
-	Field player:Sprite
+	Field mx2Sprite:Sprite
 	
 	Field fade:Bool = True
 	
@@ -62,19 +63,19 @@ Class TitleScreen Extends Screen
 	Method Start() Override
 		ChannelManager.PlayMusic(music)
 		
-		player = New Sprite(mx2Image, New Vec2f(Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 2))
+		mx2Sprite = New Sprite(mx2Image, New Vec2f(Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 2))
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
 		canvas.DrawImage(mx2Image, Window.VirtualResolution.X / 4 + Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 4)
 		canvas.DrawImage(diddy2Image, Window.VirtualResolution.X / 4, Window.VirtualResolution.Y / 4)
-		player.Render(canvas)
+		mx2Sprite.Render(canvas)
 		
 		canvas.DrawText("Press Space to move to the GameScreen", Window.VirtualResolution.X / 2, 10, .5)
 	End
 	
 	Method PostRender(canvas:Canvas, tween:Float) Override
-		ChannelManager.OutputDebug(canvas, 10, 300)
+		'ChannelManager.OutputDebug(canvas, 10, 300)
 	End
 	
 	Method Update(delta:Float) Override
@@ -93,23 +94,23 @@ Class TitleScreen Extends Screen
 	End
 	
 	Method SpriteTest(delta:Float)
-		player.Rotation += 1 * delta
+		mx2Sprite.Rotation += 1 * delta
 		Local fadeSpeed:Float = 0.2
 		If fade
-			player.Alpha -= fadeSpeed * delta
-			player.Scale -= fadeSpeed * delta
-			If player.Alpha <= 0
+			mx2Sprite.Alpha -= fadeSpeed * delta
+			mx2Sprite.Scale -= fadeSpeed * delta
+			If mx2Sprite.Alpha <= 0
 				fade = Not fade
 			End
 		Else
-			player.Alpha += fadeSpeed * delta
-			player.Scale += fadeSpeed * delta
-			If player.Alpha >= 1
+			mx2Sprite.Alpha += fadeSpeed * delta
+			mx2Sprite.Scale += fadeSpeed * delta
+			If mx2Sprite.Alpha >= 1
 				fade = Not fade
 			End
 		End
 		
-		player.Colour = New Color(Rnd(0,1), Rnd(0,1), Rnd(0,1))
+		mx2Sprite.Colour = New Color(Rnd(0,1), Rnd(0,1), Rnd(0,1))
 	End
 	
 	
@@ -163,23 +164,96 @@ Class TitleScreen Extends Screen
 End
 
 Class GameScreen Extends Screen
+	Field player:Player
+	
 	Method New(title:String)
 		Super.New(title)
+	End
+	
+	Method Load() Override
+		player  = New Player(AssetBank.GetImage("gripe.stand_right"), New Vec2f(Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 2))		
 	End
 	
 	Method Start() Override
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
+		player.RenderAnimation(canvas)
 	End
 	
 	Method PostRender(canvas:Canvas, tween:Float) Override
-		ChannelManager.OutputDebug(canvas, 10, 300)
 	End
 	
 	Method Update(delta:Float) Override
-		If Keyboard.KeyDown(Key.Space)
+		player.Update()
+		
+		If Keyboard.KeyDown(Key.Escape)
 			MoveToScreen(ScreenBank.GetScreen("TitleScreen"))
 		End
 	End
+End
+
+Class Player Extends Sprite
+	Field walkImages:Image[]
+	Field standImage:Image
+	Field jumpImage:Image[]
+	Field deadImages:Image[]
+	Field turningImages:Image[]
+	
+	Field currentAnimation:Image[]
+	Field animationBank:AnimationBank
+	Field frame:Int
+	Field maxFrame:Int
+	Field frameDelay:Int
+	Field maxFrameDelay:Int
+	
+	Method New(img:Image, position:Vec2f)	
+		Super.New(img, position)
+		animationBank = New AnimationBank
+		CreateAnimation("run_right", 8)
+		
+		For Local i:Int = 1 To 8
+			AddFrame("run_right", "gripe.run_right" + i, i - 1)
+		Next
+		
+		currentAnimation = GetAnimation("run_right")
+		maxFrameDelay = 10
+	End
+	
+	Method Update()
+		frameDelay += 1
+		If frameDelay > maxFrameDelay
+			frame += 1
+			If frame > maxFrame
+				frame = 0
+			End
+			frameDelay = 0
+		End
+	End
+	
+	Method RenderAnimation(canvas:Canvas)
+		canvas.DrawImage(currentAnimation[frame], Position)
+	End
+	
+	Method CreateAnimation(name:String, noOfFrames:Int)
+		animationBank.Set(name.ToUpper(), New Image[noOfFrames])
+	End
+	
+	Method GetAnimation:Image[](nameOfAnimation:String)
+		Local frames := animationBank.Get(nameOfAnimation.ToUpper())
+		maxFrame = frames.Length - 1
+		Return frames
+	End
+	
+	Method AddFrame(nameOfAnimation:String, nameOfImage:String, frameIndex:Int)
+		nameOfAnimation = nameOfAnimation.ToUpper()
+		nameOfImage = nameOfImage.ToUpper()
+		
+		Local image:Image = DiddyApp.GetInstance().AssetBank.GetImage(nameOfImage)
+		Local frames := animationBank.Get(nameOfAnimation)
+		frames[frameIndex] = image
+	End
+End
+
+Class AnimationBank Extends StringMap<Image[]>
 End
