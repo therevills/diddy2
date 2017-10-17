@@ -12,7 +12,7 @@ Private
 	Field _currentScreen:Screen
 	Field _screenFade:ScreenFade
 	Field _nextScreen:Screen
-	
+
 Public
 	Const UPDATE_FREQUENCY:Float = 100.0
 	Const SPIKE_SUPPRESSION:Int = 10
@@ -20,8 +20,8 @@ Public
 	Global GameTime:FixedRateLogicTimer
 	Global instance:DiddyWindow = null
 
-	Method New(title:String, width:Int, height:Int, filterTextures:Bool = True, flags:WindowFlags = WindowFlags.Resizable)
-		Super.New( title, width, height, flags )
+	Method New(title:String, width:Int, height:Int, flags:WindowFlags = WindowFlags.Resizable)
+		Super.New(title, width, height, flags)
 		Layout = "letterbox"
 		SetVirtualResolution(width, height)
 		_dt = New DeltaTimer(_fps)

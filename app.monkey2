@@ -8,13 +8,15 @@ Private
 	Field _channelManager:ChannelManager
 	Field _soundVolume:Float = 1
 	Field _musicVolume:Float = 1
+	Field _filterTextures:Bool
 Public
 	
 	Method New( title:String, width:Int, height:Int, filterTextures:Bool = True, flags:WindowFlags = WindowFlags.Resizable )
 		New AppInstance
 		_Instance = Self
-		_window = New DiddyWindow(title, width, height, filterTextures, flags)
-		_assetBank = New AssetBank
+		_window = New DiddyWindow(title, width, height, flags)
+		_assetBank = New AssetBank(filterTextures)
+		_filterTextures = filterTextures
 		_channelManager = New ChannelManager
 		_window.CreateScreenBank(_Instance)
 	End

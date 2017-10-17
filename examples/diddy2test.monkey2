@@ -1,16 +1,26 @@
+' set the namespace
 Namespace diddy2test
 
+' import all the assets so Monkey2 can access them
 #Import "assets/"
 
+' import diddy2
 #Import "../diddy2"
+
+' import the mojo module
 #Import "<mojo>"
+
+' import the standard module
 #Import "<std>"
 
+' use Using to reduce typing
 Using diddy2..
 Using mojo..
 Using std..
 
+' the Main function
 Function Main()
+	' Create a Diddy2 App with a 800 x 600 window with filtering turned off for images
 	New MyDiddyApp("Diddy 2!", 800, 600, False)
 End
 
@@ -23,6 +33,7 @@ Class MyDiddyApp Extends DiddyApp
 		Start(GetScreen("TitleScreen"))
 	End
 	
+	' load the images and sounds into the AssetBank
 	Method LoadAssets()
 		AssetBank.LoadImage("monkey2logoSmall-1.png")
 		AssetBank.LoadImage("diddy128.png")	
@@ -32,6 +43,7 @@ Class MyDiddyApp Extends DiddyApp
 		AssetBank.LoadSound("GraveyardShift.ogg")
 	End
 	
+	' load the images and sounds into the ScreenBank
 	Method CreateScreens()
 		AddScreen(New TitleScreen("TitleScreen"))
 		AddScreen(New GameScreen("GameScreen"))
@@ -53,6 +65,7 @@ Class TitleScreen Extends Screen
 	End
 	
 	Method Load() Override
+		' get the assets from the bank
 		mx2Image = AssetBank.GetImage("monkey2logoSmall-1.png")
 		diddy2Image = AssetBank.GetImage("diddy128.png")
 		shootSound = AssetBank.GetSound("shoot.ogg")
@@ -62,7 +75,7 @@ Class TitleScreen Extends Screen
 	
 	Method Start() Override
 		ChannelManager.PlayMusic(music)
-		
+		' create a sprite in the middle of the screen
 		mx2Sprite = New Sprite(mx2Image, New Vec2f(Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 2))
 	End
 	
@@ -200,27 +213,37 @@ Class Player Extends Sprite
 	Method New(img:Image, position:Vec2f)	
 		Super.New(img, position)
 		
+		' create animation called "run_right" with 8 frames
 		CreateAnimation("run_right", 8)		
+		
+		' Add images from the AssetBank to the "run_right" animation
 		For Local i:Int = 1 To 8
 			AddFrame("run_right", "gripe.run_right" + i, i - 1)
 		Next
 		
+		' create animation called "gripe.die" with 4 frames
 		CreateAnimation("gripe.die", 4)
+		
+		' Add images from the AssetBank to the "gripe.die" animation
 		For Local i:Int = 1 To 4
 			AddFrame("gripe.die", "gripe.die" + i, i - 1)
 		Next
 		
+		' Set the current animation to be "run_right" running at 50ms per frame and looping	
 		SetCurrentAnimation("run_right", 50, True)
 	End
 	
 	Method Update()
 		If Keyboard.KeyDown(Key.Q)
+			' Set the current animation to be "gripe.die" running at 125ms per frame and looping	
 			SetCurrentAnimation("gripe.die", 125, True)
 		End
 		If Keyboard.KeyDown(Key.W)
+			' Set the current animation to be "run_righte" running at 100ms per frame, not looping and pingpong once
 			SetCurrentAnimation("run_right", 100, False, True)
 		End
 		
+		' Update the animation
 		UpdateAnimation()	
 	End
 End

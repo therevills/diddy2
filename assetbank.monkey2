@@ -9,9 +9,13 @@ Private
 	Field _prefix:String = "asset::"
 	Field _imagePath:String = "graphics/"
 	Field _soundPath:String = "sounds/"
-	
+	Field _filterTextures:Bool
 Public
 	Const SPARROW_ATLAS:Int = 0
+
+	Method New(filterTextures:Bool)
+		_filterTextures = filterTextures
+	End
 
 	Method LoadImage:Image(fileName:String, setMidHandle:Bool = True)
 		Local path:String = _prefix + _imagePath + fileName
@@ -23,6 +27,10 @@ Public
 		If setMidHandle
 			image.Handle = New Vec2f(.5)
 		End
+		If Not _filterTextures
+			image.Texture.Flags = TextureFlags.None
+		End
+		
 		Local imageAsset := New ImageAsset(fileName.ToUpper(), image)
 		Set(fileName.ToUpper(), imageAsset)
 		Return image
