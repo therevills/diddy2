@@ -151,26 +151,28 @@ Public
 		_currentAnimation = GetAnimation(nameOfAnimation, frameTimerSpeed, loopAnimation, pingPongAnimation, startFrame)
 	End
 	
-	Method UpdateAnimation()
+	Method UpdateAnimation:Bool()
+		Local rv:Bool = False
 		If _frameTimerSpeed > 0
 			If Millisecs() > _frameTimer + _frameTimerSpeed
 				If Not _reverseAnimation
 					_frame += 1
 					If _frame > _maxFrame
-						ResetAnimation()
+						rv = ResetAnimation()
 					End
 				Else
 					_frame -= 1
 					If _frame < _maxFrame
-						ResetAnimation()
+						rv = ResetAnimation()
 					End
 				End
 				_frameTimer = Millisecs()
 			End
 		End
+		Return rv
 	End
 	
-	Method ResetAnimation()
+	Method ResetAnimation:Bool()
 		If _loopAnimation
 			If _pingPongAnimation
 				FlipAnimationFrames()
@@ -183,8 +185,10 @@ Public
 				_pingPongAnimationCounter += 1
 			Else
 				_frame = _maxFrame
+				Return True
 			End
 		End
+		Return False
 	End
 	
 	Method FlipAnimationFrames()

@@ -177,6 +177,7 @@ Class TitleScreen Extends Screen
 End
 
 Class GameScreen Extends Screen
+	Field animationSprite:AnimationSprite
 	Field player:Player
 	
 	Method New(title:String)
@@ -184,6 +185,9 @@ Class GameScreen Extends Screen
 	End
 	
 	Method Load() Override
+		animationSprite  = New AnimationSprite(AssetBank.GetImage("gripe.stand_right"), New Vec2f(Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 4))
+		animationSprite.Scale = New Vec2f(2, 2)
+		
 		player  = New Player(AssetBank.GetImage("gripe.stand_right"), New Vec2f(Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 2))
 		player.Scale = New Vec2f(2, 2)
 	End
@@ -192,14 +196,39 @@ Class GameScreen Extends Screen
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
+		animationSprite.Render(canvas)
 		player.Render(canvas)
 	End
 	
 	Method PostRender(canvas:Canvas, tween:Float) Override
+		Local state:String = ""
+		Select player.State
+			Case player.STANDING
+				state = "STANDING"
+			Case player.WALKING
+				state = "WALKING"
+			Case player.TURNING
+				state = "TURNING"
+			Case player.DIE
+				state = "DIEING"
+		End
+		If player.Jumping Then state = "JUMPING"
+		canvas.DrawText("State: " + state, 10, 110)
+		Local dir:String = ""
+		Select player._direction
+			Case player.RIGHT
+				dir = "RIGHT"
+			Case player.LEFT
+				dir = "LEFT"				
+		End
+		canvas.DrawText("Direction: " + dir, 10, 125)
+		
 		player.RenderDebug(canvas)
+		
 	End
 	
 	Method Update(delta:Float) Override
+		animationSprite.Update()
 		player.Update()
 		
 		If Keyboard.KeyDown(Key.Escape)
@@ -208,7 +237,8 @@ Class GameScreen Extends Screen
 	End
 End
 
-Class Player Extends Sprite
+
+Class AnimationSprite Extends Sprite
 	
 	Method New(img:Image, position:Vec2f)	
 		Super.New(img, position)
@@ -239,11 +269,160 @@ Class Player Extends Sprite
 			SetCurrentAnimation("gripe.die", 125, True)
 		End
 		If Keyboard.KeyDown(Key.W)
-			' Set the current animation to be "run_righte" running at 100ms per frame, not looping and pingpong once
+			' Set the current animation to be "run_right" running at 100ms per frame, not looping and pingpong once
 			SetCurrentAnimation("run_right", 100, False, True)
 		End
 		
 		' Update the animation
 		UpdateAnimation()	
+	End
+End
+
+Class Player Extends Sprite
+	Field _state:Int = STANDING
+	Field _jumping:Bool
+	Field _direction:Int = RIGHT
+	
+	Const RIGHT:Int = 0
+	Const LEFT:Int = 1
+	
+	Const STANDING:Int = 0
+	Const WALKING:Int = 1
+	Const DIE:Int = 2
+	Const TURNING:Int = 3
+
+
+	Method New(img:Image, position:Vec2f)	
+		Super.New(img, position)
+		
+		' standing still
+		CreateAnimation("gripe.stand_right", 1)
+		AddFrame("gripe.stand_right", "gripe.stand_right", 0)
+
+		' jumping
+		CreateAnimation("gripe.jump_right", 1)
+		AddFrame("gripe.jump_right", "gripe.jump_right", 0)
+
+		' turning
+		CreateAnimation("gripe.turn_right_to_left", 4)		
+		For Local i:Int = 1 To 4
+			AddFrame("gripe.turn_right_to_left", "gripe.turn_right_to_left" + i, i - 1)
+		Next
+		
+		' running
+		CreateAnimation("gripe.run_right", 8)		
+		For Local i:Int = 1 To 8
+			AddFrame("gripe.run_right", "gripe.run_right" + i, i - 1)
+		Next
+		
+		' dying
+		CreateAnimation("gripe.die", 4)
+		For Local i:Int = 1 To 4
+			AddFrame("gripe.die", "gripe.die" + i, i - 1)
+		Next
+		
+		SetCurrentAnimation("gripe.stand_right", 50, False)
+		_state = STANDING
+	End
+	
+	Method SetupWalkAnimation()
+		If _direction = RIGHT
+			Scale = New Vec2f(2, 2)
+		Elseif _direction = LEFT
+			If Scale.X > 0
+				Scale = New Vec2f(-2, 2)
+			End
+		End
+		If _state <> WALKING SetCurrentAnimation("gripe.run_right", 100, True)
+	End
+		
+	Method SetupStandAnimation()
+		If _state <> STANDING
+			SetCurrentAnimation("gripe.stand_right", 50, True)
+		End
+		_state = STANDING
+	End
+	
+	Method SetupJumpAnimation()
+		SetCurrentAnimation("gripe.jump_right", 50, True)
+	End
+	
+	Method SetupDieAnimation()
+		_state = DIE
+		SetCurrentAnimation("gripe.die", 125, True)
+	End
+	
+	Method SetUpTurningAnimation()
+		If _state <> TURNING
+			SetCurrentAnimation("gripe.turn_right_to_left", 40)
+		End
+		_state = TURNING
+	End
+	
+	Method Update()
+		local hasAnimimationFinished:Bool = UpdateAnimation()
+		if _state = TURNING
+			if hasAnimimationFinished
+				if _direction = RIGHT
+					_direction = LEFT
+					If Scale.X > 0
+						Scale = New Vec2f(-2, 2)
+					End
+				Elseif _direction = LEFT
+					_direction = RIGHT
+					Scale = New Vec2f(2, 2)
+				End
+				SetupStandAnimation()
+			End
+		End
+		If _state <> DIE
+			If Keyboard.KeyDown(Key.Left)
+				If _direction = RIGHT
+					If _jumping
+						_direction = LEFT
+					Else
+						If _state <> TURNING Then SetUpTurningAnimation()
+					End
+				Else
+					_direction = LEFT
+					SetupWalkAnimation()
+					_state = WALKING
+				End
+			Else If Keyboard.KeyDown(Key.Right)
+				If _direction = LEFT
+					If _jumping
+						_direction = RIGHT
+					Else
+						If _state <> TURNING Then SetUpTurningAnimation()
+					End
+				Else
+					_direction = RIGHT
+					SetupWalkAnimation()
+					_state = WALKING
+				End
+			Else
+				If _state <> TURNING Then SetupStandAnimation()
+			End
+			If Keyboard.KeyDown(Key.Space) And Not _jumping Then
+				_jumping = True
+			End
+			
+			If _jumping
+				SetupJumpAnimation()
+			End
+		End
+		
+	End
+	
+	Property State:Int()
+		Return _state
+	Setter(state:Int)
+		_state = state
+	End
+	
+	Property Jumping:Bool()
+		Return _jumping
+	Setter(jumping:Int)
+		_jumping = jumping
 	End
 End
