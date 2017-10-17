@@ -8,11 +8,11 @@
 	<SubTexture name="gripe.turn_right_to_left2" x="96" y="0" width="32" height="32"/>
 	<SubTexture name="gripe.turn_right_to_left3" x="128" y="0" width="32" height="32"/>
 	<SubTexture name="gripe.turn_right_to_left4" x="160" y="0" width="32" height="32"/>
-    <SubTexture name="gripe.die1" x="192" y="0" width="32" height="32"/>
+	<SubTexture name="gripe.die1" x="192" y="0" width="32" height="32"/>
 	<SubTexture name="gripe.die2" x="224" y="0" width="32" height="32"/>
 	<SubTexture name="gripe.die3" x="256" y="0" width="32" height="32"/>
 	<SubTexture name="gripe.die4" x="288" y="0" width="32" height="32"/>
-    <SubTexture name="gripe.run_right1" x="0" y="32" width="32" height="32"/>
+	<SubTexture name="gripe.run_right1" x="0" y="32" width="32" height="32"/>
 	<SubTexture name="gripe.run_right2" x="32" y="32" width="32" height="32"/>
 	<SubTexture name="gripe.run_right3" x="64" y="32" width="32" height="32"/>
 	<SubTexture name="gripe.run_right4" x="96" y="32" width="32" height="32"/>

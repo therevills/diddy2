@@ -143,7 +143,11 @@ Public
 		Local asset:Asset = Get(name)
 		
 		Local imageAsset:ImageAsset = Cast<ImageAsset>(asset)
-		If imageAsset = Null Then Print("Image '" + name + "' not found in the AssetBank")
+		If imageAsset = Null
+			Print("Image '" + name + "' not found in the AssetBank")
+			Print(ToString())
+			App.Terminate()
+		End
 		Return imageAsset.RawImage
 	End
 	
@@ -152,7 +156,11 @@ Public
 		Local asset:Asset = Get(name)
 		
 		Local soundAsset:SoundAsset = Cast<SoundAsset>(asset)
-		If soundAsset = Null Then Print("Sound '" + name + "' not found in the AssetBank")
+		If soundAsset = Null
+			Print("Sound '" + name + "' not found in the AssetBank")
+			Print(ToString())
+			App.Terminate()
+		End
 		Return soundAsset.RawSound
 	End
 	

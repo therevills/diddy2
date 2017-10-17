@@ -9,6 +9,7 @@ Namespace diddy2
 #Import "screenfade"
 #Import "screenbank"
 #Import "assetbank"
+#Import "animationbank"
 #Import "deltatiming"
 #Import "sprite"
 #Import "channelmanager"

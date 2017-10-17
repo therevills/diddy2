@@ -171,17 +171,19 @@ Class GameScreen Extends Screen
 	End
 	
 	Method Load() Override
-		player  = New Player(AssetBank.GetImage("gripe.stand_right"), New Vec2f(Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 2))		
+		player  = New Player(AssetBank.GetImage("gripe.stand_right"), New Vec2f(Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 2))
+		player.Scale = New Vec2f(2, 2)
 	End
 	
 	Method Start() Override
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
-		player.RenderAnimation(canvas)
+		player.Render(canvas)
 	End
 	
 	Method PostRender(canvas:Canvas, tween:Float) Override
+		player.RenderDebug(canvas)
 	End
 	
 	Method Update(delta:Float) Override
@@ -194,66 +196,31 @@ Class GameScreen Extends Screen
 End
 
 Class Player Extends Sprite
-	Field walkImages:Image[]
-	Field standImage:Image
-	Field jumpImage:Image[]
-	Field deadImages:Image[]
-	Field turningImages:Image[]
-	
-	Field currentAnimation:Image[]
-	Field animationBank:AnimationBank
-	Field frame:Int
-	Field maxFrame:Int
-	Field frameDelay:Int
-	Field maxFrameDelay:Int
 	
 	Method New(img:Image, position:Vec2f)	
 		Super.New(img, position)
-		animationBank = New AnimationBank
-		CreateAnimation("run_right", 8)
 		
+		CreateAnimation("run_right", 8)		
 		For Local i:Int = 1 To 8
 			AddFrame("run_right", "gripe.run_right" + i, i - 1)
 		Next
 		
-		currentAnimation = GetAnimation("run_right")
-		maxFrameDelay = 10
+		CreateAnimation("gripe.die", 4)
+		For Local i:Int = 1 To 4
+			AddFrame("gripe.die", "gripe.die" + i, i - 1)
+		Next
+		
+		SetCurrentAnimation("run_right", 50, True)
 	End
 	
 	Method Update()
-		frameDelay += 1
-		If frameDelay > maxFrameDelay
-			frame += 1
-			If frame > maxFrame
-				frame = 0
-			End
-			frameDelay = 0
+		If Keyboard.KeyDown(Key.Q)
+			SetCurrentAnimation("gripe.die", 125, True)
 		End
-	End
-	
-	Method RenderAnimation(canvas:Canvas)
-		canvas.DrawImage(currentAnimation[frame], Position)
-	End
-	
-	Method CreateAnimation(name:String, noOfFrames:Int)
-		animationBank.Set(name.ToUpper(), New Image[noOfFrames])
-	End
-	
-	Method GetAnimation:Image[](nameOfAnimation:String)
-		Local frames := animationBank.Get(nameOfAnimation.ToUpper())
-		maxFrame = frames.Length - 1
-		Return frames
-	End
-	
-	Method AddFrame(nameOfAnimation:String, nameOfImage:String, frameIndex:Int)
-		nameOfAnimation = nameOfAnimation.ToUpper()
-		nameOfImage = nameOfImage.ToUpper()
+		If Keyboard.KeyDown(Key.W)
+			SetCurrentAnimation("run_right", 100, False, True)
+		End
 		
-		Local image:Image = DiddyApp.GetInstance().AssetBank.GetImage(nameOfImage)
-		Local frames := animationBank.Get(nameOfAnimation)
-		frames[frameIndex] = image
+		UpdateAnimation()	
 	End
-End
-
-Class AnimationBank Extends StringMap<Image[]>
 End

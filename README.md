@@ -7,3 +7,4 @@ Diddy2 for MonkeyX2 (http://monkeycoder.co.nz/) is a simple game framework, prov
 
 
 Graveyard Shift music by Kevin Macleod.
+Graphics by Marc Russell (spicypixel.net)
