@@ -2,12 +2,12 @@ Namespace diddy2.sprite
 
 Class Sprite
 Private
-	Field _position:Vec2f
 	Field _z:Float
 	Field _rotation:Float = Pi / 2
 	Field _image:Image
+	Field _wrapImageX:Bool = False
+	Field _wrapImageY:Bool = False
 	Field _colour:Color = Color.White
-	Field _scale:Vec2f = New Vec2f(1, 1)
 	Field _alpha:Float = 1
 	
 	Field _currentAnimation:Image[]
@@ -22,10 +22,18 @@ Private
 	Field _pingPongAnimation:Bool = False
 	Field _pingPongAnimationCounter:Int
 	Field _maxPingPongAnimationCounter:Int = 1
-
+	
 Public
+
+	Field position:Vec2f
+	Field originPosition:Vec2f
+	Field scale:Vec2f = New Vec2f(1, 1)
+	Field speed:Vec2f = New Vec2f(1, 1)
+	Field deltaValue:Vec2f = New Vec2f(1, 1)
+
 	Method New(image:Image, position:Vec2f)
-		_position = position
+		Self.position = position
+		Self.originPosition = position
 		_image = image
 		_animationBank = New AnimationBank
 	End
@@ -39,10 +47,30 @@ Public
 
 		Local r := _rotation - Pi / 2
 		
+		Local localImage:Image
+		
 		If _currentAnimation
-			canvas.DrawImage(_currentAnimation[_frame], _position, r, _scale)
+			localImage = _currentAnimation[_frame]
+			
+			canvas.DrawImage(localImage, position, r, scale)
+			
 		Else
-			canvas.DrawImage(_image, _position, r, _scale)
+			localImage = _image
+			
+			canvas.DrawImage(localImage, position, r, scale)
+		End
+
+		Local vrWidth  := DiddyApp.GetInstance().Window.VirtualResolution.X
+		Local vrHeight := DiddyApp.GetInstance().Window.VirtualResolution.Y
+		
+		If _wrapImageX
+			If position.X - localImage.Radius < 0 canvas.DrawImage(localImage, position.X + vrWidth, position.Y, r, scale.X, scale.Y)
+			If position.X + localImage.Radius > vrWidth canvas.DrawImage(localImage, position.X - vrWidth, position.Y, r, scale.X, scale.Y)
+		End
+		
+		If _wrapImageY
+			If position.Y - localImage.Radius < 0 canvas.DrawImage(localImage, position.X, position.Y + vrHeight, r, scale.X, scale.Y)
+			If position.Y + localImage.Radius > vrHeight canvas.DrawImage(localImage, position.X, position.Y - vrHeight, r, scale.X, scale.Y)
 		End
 		
 		canvas.Color = canvasColor
@@ -62,6 +90,25 @@ Public
 		y += gap
 		canvas.DrawText("_frameTimer: " + _frameTimer, 10, y)
 		y += gap
+	End
+
+	Property WrapImageX:Bool()
+		Return _wrapImageX
+	Setter (wrapImageX:Bool)
+		_wrapImageX = wrapImageX
+	End
+	
+	Property WrapImageY:Bool()
+		Return _wrapImageY
+	Setter (wrapImageY:Bool)
+		_wrapImageY = wrapImageY
+	End
+	
+	Property WrapImage:Bool()
+		Return _wrapImageX And _wrapImageY
+	Setter (wrapImage:Bool)
+		_wrapImageX = wrapImage
+		_wrapImageY = wrapImage
 	End
 
 	Property CurrentAnimation:Image[]()
@@ -87,25 +134,13 @@ Public
 	Setter (maxFrame:Int)
 		_maxFrame = maxFrame
 	End
-	
-	Property Position:Vec2f()
-		Return _position
-	Setter (position:Vec2f)
-		_position = position
-	End
-	
+
 	Property Colour:Color()
 		Return _colour
 	Setter (color:Color)
 		_colour = color
 	End
-	
-	Property Scale:Vec2f()
-		Return _scale
-	Setter (scale:Vec2f)
-		_scale = scale
-	End
-	
+
 	Property Rotation:Float()
 		Return _rotation
 	Setter (rotation:Float)

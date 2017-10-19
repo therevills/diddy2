@@ -59,7 +59,7 @@ Class TitleScreen Extends Screen
 	Field mx2Sprite:Sprite
 	
 	Field fade:Bool = True
-	
+
 	Method New(title:String)
 		Super.New(title)
 	End
@@ -71,7 +71,6 @@ Class TitleScreen Extends Screen
 		shootSound = AssetBank.GetSound("shoot.ogg")
 		music = AssetBank.GetSound("GraveyardShift.ogg")
 	End
-	
 	
 	Method Start() Override
 		ChannelManager.PlayMusic(music)
@@ -111,13 +110,13 @@ Class TitleScreen Extends Screen
 		Local fadeSpeed:Float = 0.2
 		If fade
 			mx2Sprite.Alpha -= fadeSpeed * delta
-			mx2Sprite.Scale -= fadeSpeed * delta
+			mx2Sprite.scale -= fadeSpeed * delta
 			If mx2Sprite.Alpha <= 0
 				fade = Not fade
 			End
 		Else
 			mx2Sprite.Alpha += fadeSpeed * delta
-			mx2Sprite.Scale += fadeSpeed * delta
+			mx2Sprite.scale += fadeSpeed * delta
 			If mx2Sprite.Alpha >= 1
 				fade = Not fade
 			End
@@ -125,7 +124,6 @@ Class TitleScreen Extends Screen
 		
 		mx2Sprite.Colour = New Color(Rnd(0,1), Rnd(0,1), Rnd(0,1))
 	End
-	
 	
 	Method SoundTest()
 		If Keyboard.KeyHit(Key.PageDown)
@@ -186,10 +184,11 @@ Class GameScreen Extends Screen
 	
 	Method Load() Override
 		animationSprite  = New AnimationSprite(AssetBank.GetImage("gripe.stand_right"), New Vec2f(Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 4))
-		animationSprite.Scale = New Vec2f(2, 2)
+		animationSprite.scale = New Vec2f(2, 2)
 		
 		player  = New Player(AssetBank.GetImage("gripe.stand_right"), New Vec2f(Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 2))
-		player.Scale = New Vec2f(2, 2)
+		player.scale = New Vec2f(2, 2)
+		player.WrapImage = True
 	End
 	
 	Method Start() Override
@@ -222,21 +221,20 @@ Class GameScreen Extends Screen
 				dir = "LEFT"				
 		End
 		canvas.DrawText("Direction: " + dir, 10, 125)
+		canvas.DrawText("Position: " + player.position, 10, 145)
 		
 		player.RenderDebug(canvas)
-		
 	End
 	
 	Method Update(delta:Float) Override
-		animationSprite.Update()
-		player.Update()
+		animationSprite.Update(delta)
+		player.Update(delta)
 		
 		If Keyboard.KeyDown(Key.Escape)
 			MoveToScreen(ScreenBank.GetScreen("TitleScreen"))
 		End
 	End
 End
-
 
 Class AnimationSprite Extends Sprite
 	
@@ -263,7 +261,7 @@ Class AnimationSprite Extends Sprite
 		SetCurrentAnimation("run_right", 50, True)
 	End
 	
-	Method Update()
+	Method Update(delta:Float)
 		If Keyboard.KeyDown(Key.Q)
 			' Set the current animation to be "gripe.die" running at 125ms per frame and looping	
 			SetCurrentAnimation("gripe.die", 125, True)
@@ -291,9 +289,13 @@ Class Player Extends Sprite
 	Const DIE:Int = 2
 	Const TURNING:Int = 3
 
-
+	Const GRAVITY:Float = 650
+	
 	Method New(img:Image, position:Vec2f)	
 		Super.New(img, position)
+		
+		speed = New Vec2f(80, 410)
+		deltaValue = New Vec2f(0, 0)
 		
 		' standing still
 		CreateAnimation("gripe.stand_right", 1)
@@ -327,13 +329,13 @@ Class Player Extends Sprite
 	
 	Method SetupWalkAnimation()
 		If _direction = RIGHT
-			Scale = New Vec2f(2, 2)
+			scale.x = Abs(scale.x)
 		Elseif _direction = LEFT
-			If Scale.X > 0
-				Scale = New Vec2f(-2, 2)
+			If scale.x > 0
+				scale.x = -scale.x
 			End
 		End
-		If _state <> WALKING SetCurrentAnimation("gripe.run_right", 100, True)
+		If _state <> WALKING SetCurrentAnimation("gripe.run_right", 80, True)
 	End
 		
 	Method SetupStandAnimation()
@@ -359,24 +361,28 @@ Class Player Extends Sprite
 		_state = TURNING
 	End
 	
-	Method Update()
+	Method Update(delta:Float)
 		local hasAnimimationFinished:Bool = UpdateAnimation()
+		Local leftKey := Keyboard.KeyDown(Key.Left) Or Keyboard.KeyDown(Key.A)
+		Local rightKey := Keyboard.KeyDown(Key.Right) Or Keyboard.KeyDown(Key.D)
+		Local fireKey := Keyboard.KeyDown(Key.Space)
+		
 		if _state = TURNING
 			if hasAnimimationFinished
 				if _direction = RIGHT
 					_direction = LEFT
-					If Scale.X > 0
-						Scale = New Vec2f(-2, 2)
+					If scale.x > 0
+						scale.x = -scale.x
 					End
 				Elseif _direction = LEFT
 					_direction = RIGHT
-					Scale = New Vec2f(2, 2)
+					scale.x = Abs(scale.x)
 				End
 				SetupStandAnimation()
 			End
 		End
 		If _state <> DIE
-			If Keyboard.KeyDown(Key.Left)
+			If leftKey
 				If _direction = RIGHT
 					If _jumping
 						_direction = LEFT
@@ -387,8 +393,9 @@ Class Player Extends Sprite
 					_direction = LEFT
 					SetupWalkAnimation()
 					_state = WALKING
+					position.x -= speed.x * delta
 				End
-			Else If Keyboard.KeyDown(Key.Right)
+			Else If rightKey
 				If _direction = LEFT
 					If _jumping
 						_direction = RIGHT
@@ -399,19 +406,39 @@ Class Player Extends Sprite
 					_direction = RIGHT
 					SetupWalkAnimation()
 					_state = WALKING
+					position.x += speed.x * delta
 				End
 			Else
-				If _state <> TURNING Then SetupStandAnimation()
+				If _state <> TURNING And Not _jumping Then SetupStandAnimation()
 			End
-			If Keyboard.KeyDown(Key.Space) And Not _jumping Then
+			If fireKey And Not _jumping Then
+				deltaValue.y =- speed.y
 				_jumping = True
 			End
 			
 			If _jumping
 				SetupJumpAnimation()
+			
+				deltaValue.y += GRAVITY * delta
+				Local tmpY := position.y + (deltaValue.y * delta)
+				If deltaValue.y <> 0
+					If deltaValue.y > 0
+						If position.y > originPosition.y
+							deltaValue.y = 0
+							_jumping = False
+							SetupStandAnimation()
+							position.y = originPosition.y
+						Else
+							position.y = tmpY
+						End
+					Else
+						position.y = tmpY
+					End
+				End
+					
 			End
 		End
-		
+		position.x = (position.x + DiddyApp.GetInstance().Window.VirtualResolution.x) Mod DiddyApp.GetInstance().Window.VirtualResolution.x
 	End
 	
 	Property State:Int()
