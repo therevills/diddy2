@@ -12,7 +12,10 @@ Private
 	Field _currentScreen:Screen
 	Field _screenFade:ScreenFade
 	Field _nextScreen:Screen
-
+	Field _scrollX:Float
+	Field _scrollY:Float
+	Field _maxScrollX:Float
+	Field _maxScrollY:Float
 Public
 	Const UPDATE_FREQUENCY:Float = 100.0
 	Const SPIKE_SUPPRESSION:Int = 10
@@ -24,6 +27,8 @@ Public
 		Super.New(title, width, height, flags)
 		Layout = "letterbox"
 		SetVirtualResolution(width, height)
+		_maxScrollX = width
+		_maxScrollY = height
 		_dt = New DeltaTimer(_fps)
 		Self._screenFade = New ScreenFade(width, height)
 		SwapInterval = 1
@@ -81,13 +86,13 @@ Public
 		s.PreStart(ScreenFade.FADE_IN, 0)
 	End
 	
-	Method GameLogic(delta:Float)
+	Method GameLogic(fixedRate:Float)
 		If _screenFade.Active
-			_screenFade.Update(delta)
+			_screenFade.Update(fixedRate)
 		End
 		If _currentScreen
 			If Not _screenFade.Active Or _currentScreen.AllowUpdatesInFade
-				_currentScreen.Update(delta)
+				_currentScreen.Update(fixedRate)
 			End
 		End
 	End
@@ -125,7 +130,7 @@ Public
 		App.RequestRender()
 		Local delta:Float = GameTime.ProcessTime()
 		While GameTime.LogicUpdateRequired()
-			GameLogic(delta)
+			GameLogic(GameTime.GetLogicFPS())
 		End
 		Local tween:Float = GameTime.GetTween()
 		GameRender(canvas, tween)
@@ -150,5 +155,38 @@ Public
 	Method SetVirtualResolution(width:Int, height:Int)
 		_virtualResolution = New Vec2i(width, height)
 		MinSize = New Vec2i(width / 2, height / 2)
+	End
+	
+	Property ScrollX:Float()
+		Return _scrollX
+	Setter(scrollX:Float)
+		_scrollX = scrollX
+	End
+	
+	Property ScrollY:Float()
+		Return _scrollY
+	Setter(scrollY:Float)
+		_scrollY = scrollY
+	End
+	
+	Property MaxScrollX:Float()
+		Return _maxScrollX
+	Setter(maxScrollX:Float)
+		_maxScrollX = maxScrollX
+	End
+	
+	Property MaxScrollY:Float()
+		Return _maxScrollY
+	Setter(maxScrollY:Float)
+		_maxScrollY = maxScrollY
+	End
+	
+	Method ScrollHorizontal(amount:Float)
+		_scrollX += amount
+		If _scrollX < 0 Then
+			_scrollX = 0
+		Else
+			If _scrollX > _maxScrollX Then _scrollX = _maxScrollX
+		EndIf
 	End
 End

@@ -14,6 +14,8 @@ Private
 	Field _counter:Float
 	Field _fadeMusic:Bool
 	Field _fadeSound:Bool
+	Field _startTime:Int
+	Field _debug:Bool = False
 Public
 	Const FADE_IN:Int = 0
 	Const FADE_OUT:Int = 1
@@ -46,6 +48,7 @@ Public
 			_ratio = 0	
 		End
 		_counter = 0
+		_startTime = Millisecs()
 	End
 	
 	Method SetFadeTime(ms:Float)
@@ -53,10 +56,10 @@ Public
 		_fadeTime = gt
 	End
 	
-	Method Update(delta:Float)
+	Method Update(fixedRate:Float)
 		If Not _active Return
 
-		_counter += 1 + delta
+		_counter += 1 + fixedRate
 		CalcRatio()
 		
 		If _fadeSound
@@ -70,6 +73,10 @@ Public
 		
 		If _counter > _fadeTime
 			_active = False
+			If _debug
+				Local totalTime := Millisecs() - _startTime
+				Print "Screen Fade TotalTime = " + totalTime
+			End
 			If _fadeType = FADE_OUT		
 				DiddyApp.GetInstance().GetCurrentScreen().PostFadeOut()
 			Else

@@ -14,6 +14,7 @@ Namespace diddy2
 #Import "sprite"
 #Import "channelmanager"
 #Import "math"
+#Import "functions"
 
 Using std..
 Using mojo..

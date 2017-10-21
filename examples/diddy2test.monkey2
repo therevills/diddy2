@@ -27,7 +27,7 @@ End
 Class MyDiddyApp Extends DiddyApp
 	Method New(title:String, width:Int, height:Int, filterTextures:Bool = True)
 		Super.New(title, width, height, filterTextures)
-		'SetDebug(True)
+		SetDebug(True)
 		LoadAssets()
 		CreateScreens()
 		Start(GetScreen("TitleScreen"))
@@ -38,6 +38,7 @@ Class MyDiddyApp Extends DiddyApp
 		AssetBank.LoadImage("monkey2logoSmall-1.png")
 		AssetBank.LoadImage("diddy128.png")	
 		AssetBank.LoadAtlas("gripe.xml", AssetBank.SPARROW_ATLAS)
+		AssetBank.LoadImage("background.png", False)
 		
 		AssetBank.LoadSound("shoot.ogg")
 		AssetBank.LoadSound("GraveyardShift.ogg")
@@ -90,8 +91,8 @@ Class TitleScreen Extends Screen
 		'ChannelManager.OutputDebug(canvas, 10, 300)
 	End
 	
-	Method Update(delta:Float) Override
-		SpriteTest(delta)
+	Method Update(fixedRate:Float) Override
+		SpriteTest(fixedRate)
 
 		SoundTest()
 
@@ -105,18 +106,18 @@ Class TitleScreen Extends Screen
 		End
 	End
 	
-	Method SpriteTest(delta:Float)
-		mx2Sprite.Rotation += 1 * delta
+	Method SpriteTest(fixedRate:Float)
+		mx2Sprite.Rotation += 1 * fixedRate
 		Local fadeSpeed:Float = 0.2
 		If fade
-			mx2Sprite.Alpha -= fadeSpeed * delta
-			mx2Sprite.scale -= fadeSpeed * delta
+			mx2Sprite.Alpha -= fadeSpeed * fixedRate
+			mx2Sprite.scale -= fadeSpeed * fixedRate
 			If mx2Sprite.Alpha <= 0
 				fade = Not fade
 			End
 		Else
-			mx2Sprite.Alpha += fadeSpeed * delta
-			mx2Sprite.scale += fadeSpeed * delta
+			mx2Sprite.Alpha += fadeSpeed * fixedRate
+			mx2Sprite.scale += fadeSpeed * fixedRate
 			If mx2Sprite.Alpha >= 1
 				fade = Not fade
 			End
@@ -177,6 +178,8 @@ End
 Class GameScreen Extends Screen
 	Field animationSprite:AnimationSprite
 	Field player:Player
+	Field scrollingPlayer:ScrollingPlayer
+	Field background:Image
 	
 	Method New(title:String)
 		Super.New(title)
@@ -189,19 +192,28 @@ Class GameScreen Extends Screen
 		player  = New Player(AssetBank.GetImage("gripe.stand_right"), New Vec2f(Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 2))
 		player.scale = New Vec2f(2, 2)
 		player.WrapImage = True
+		
+		scrollingPlayer = New ScrollingPlayer(AssetBank.GetImage("gripe.stand_right"), New Vec2f(Window.VirtualResolution.X / 2, Window.VirtualResolution.Y / 4 + Window.VirtualResolution.Y / 2 ))
+		scrollingPlayer.scale = New Vec2f(2, 2)
+		
+		background = AssetBank.GetImage("background.png")
+		Window.MaxScrollX = background.Width * .5
 	End
 	
 	Method Start() Override
 	End
 	
 	Method Render(canvas:Canvas, tween:Float) Override
+		TileImage(canvas, background, Window.ScrollX, Window.ScrollY, Window.VirtualResolution.x, Window.VirtualResolution.Y)
+		'canvas.DrawImage(background, -Window.ScrollX, Window.ScrollY)
 		animationSprite.Render(canvas)
 		player.Render(canvas)
+		scrollingPlayer.Render(canvas, Window.ScrollX, Window.ScrollY)
 	End
 	
 	Method PostRender(canvas:Canvas, tween:Float) Override
 		Local state:String = ""
-		Select player.State
+		Select scrollingPlayer.State
 			Case player.STANDING
 				state = "STANDING"
 			Case player.WALKING
@@ -211,24 +223,25 @@ Class GameScreen Extends Screen
 			Case player.DIE
 				state = "DIEING"
 		End
-		If player.Jumping Then state = "JUMPING"
+		If scrollingPlayer.Jumping Then state = "JUMPING"
 		canvas.DrawText("State: " + state, 10, 110)
 		Local dir:String = ""
-		Select player._direction
+		Select scrollingPlayer._direction
 			Case player.RIGHT
 				dir = "RIGHT"
 			Case player.LEFT
 				dir = "LEFT"				
 		End
 		canvas.DrawText("Direction: " + dir, 10, 125)
-		canvas.DrawText("Position: " + player.position, 10, 145)
+		canvas.DrawText("Position: " + scrollingPlayer.position, 10, 140)
 		
 		player.RenderDebug(canvas)
 	End
 	
-	Method Update(delta:Float) Override
-		animationSprite.Update(delta)
-		player.Update(delta)
+	Method Update(fixedRate:Float) Override
+		animationSprite.Update(fixedRate)
+		player.Update(fixedRate, True)
+		scrollingPlayer.Update(fixedRate, False)
 		
 		If Keyboard.KeyDown(Key.Escape)
 			MoveToScreen(ScreenBank.GetScreen("TitleScreen"))
@@ -261,7 +274,7 @@ Class AnimationSprite Extends Sprite
 		SetCurrentAnimation("run_right", 50, True)
 	End
 	
-	Method Update(delta:Float)
+	Method Update(fixedRate:Float)
 		If Keyboard.KeyDown(Key.Q)
 			' Set the current animation to be "gripe.die" running at 125ms per frame and looping	
 			SetCurrentAnimation("gripe.die", 125, True)
@@ -273,6 +286,30 @@ Class AnimationSprite Extends Sprite
 		
 		' Update the animation
 		UpdateAnimation()	
+	End
+End
+
+Class ScrollingPlayer Extends Player
+	Method New(img:Image, position:Vec2f)	
+		Super.New(img, position)
+	End
+	
+	Method Update(fixedRate:Float, wrapImage:Bool) Override
+		Super.Update(fixedRate, wrapImage)
+		
+		Local border:Int = 200
+		If position.x - Window.ScrollX < border
+			Window.ScrollHorizontal((position.x - Window.ScrollX) - border)
+		End
+		If position.x - Window.ScrollX > Window.VirtualResolution.X - border
+			Window.ScrollHorizontal((position.x - Window.ScrollX) - (Window.VirtualResolution.X - border))
+		End
+		If position.x - Window.ScrollX > Window.VirtualResolution.X - Image.Width
+			position.x = Window.VirtualResolution.X + Window.ScrollX - Image.Width
+		End
+		If position.x < Image.Width
+			position.x = Image.Width
+		End
 	End
 End
 
@@ -294,7 +331,7 @@ Class Player Extends Sprite
 	Method New(img:Image, position:Vec2f)	
 		Super.New(img, position)
 		
-		speed = New Vec2f(80, 410)
+		speed = New Vec2f(160, 410)
 		deltaValue = New Vec2f(0, 0)
 		
 		' standing still
@@ -361,7 +398,7 @@ Class Player Extends Sprite
 		_state = TURNING
 	End
 	
-	Method Update(delta:Float)
+	Method Update(fixedRate:Float, wrapImage:Bool) Virtual
 		local hasAnimimationFinished:Bool = UpdateAnimation()
 		Local leftKey := Keyboard.KeyDown(Key.Left) Or Keyboard.KeyDown(Key.A)
 		Local rightKey := Keyboard.KeyDown(Key.Right) Or Keyboard.KeyDown(Key.D)
@@ -393,7 +430,7 @@ Class Player Extends Sprite
 					_direction = LEFT
 					SetupWalkAnimation()
 					_state = WALKING
-					position.x -= speed.x * delta
+					position.x -= speed.x * fixedRate
 				End
 			Else If rightKey
 				If _direction = LEFT
@@ -406,7 +443,7 @@ Class Player Extends Sprite
 					_direction = RIGHT
 					SetupWalkAnimation()
 					_state = WALKING
-					position.x += speed.x * delta
+					position.x += speed.x * fixedRate
 				End
 			Else
 				If _state <> TURNING And Not _jumping Then SetupStandAnimation()
@@ -418,9 +455,8 @@ Class Player Extends Sprite
 			
 			If _jumping
 				SetupJumpAnimation()
-			
-				deltaValue.y += GRAVITY * delta
-				Local tmpY := position.y + (deltaValue.y * delta)
+				deltaValue.y += GRAVITY * fixedRate
+				Local tmpY := position.y + (deltaValue.y * fixedRate)
 				If deltaValue.y <> 0
 					If deltaValue.y > 0
 						If position.y > originPosition.y
@@ -438,7 +474,9 @@ Class Player Extends Sprite
 					
 			End
 		End
-		position.x = (position.x + DiddyApp.GetInstance().Window.VirtualResolution.x) Mod DiddyApp.GetInstance().Window.VirtualResolution.x
+		If wrapImage
+			position.x = (position.x + Window.VirtualResolution.x) Mod Window.VirtualResolution.x
+		End
 	End
 	
 	Property State:Int()

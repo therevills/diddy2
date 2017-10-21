@@ -67,7 +67,7 @@ Public
 	Method PostRender(canvas:Canvas, tween:Float) Virtual
 	End
 	
-	Method Update(delta:Float) Abstract
+	Method Update(fixedRate:Float) Abstract
 	
 	Method PostFadeOut()
 		Kill()
@@ -102,7 +102,7 @@ Class EmptyScreen Extends Screen
 	Method Start() Override
 	End
 	
-	Method Update(delta:Float) Override
+	Method Update(fixedRate:Float) Override
 		MoveToScreen(_destinationScreen, 0)
 	End
 	
@@ -127,7 +127,7 @@ Class ExitScreen Extends Screen
 	Method Render(canvas:Canvas, tween:Float) Override
 	End
 	
-	Method Update(delta:Float) Override
+	Method Update(fixedRate:Float) Override
 		App.Terminate()
 	End
 End

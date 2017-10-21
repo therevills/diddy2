@@ -38,7 +38,7 @@ Public
 		_animationBank = New AnimationBank
 	End
 	
-	Method Render(canvas:Canvas)
+	Method Render(canvas:Canvas, offsetX:Float = 0, offsetY:Float = 0)
 		Local canvasColor := canvas.Color
 		Local canvasAlpha := canvas.Alpha
 		
@@ -48,29 +48,32 @@ Public
 		Local r := _rotation - Pi / 2
 		
 		Local localImage:Image
+
+		Local localPosition:Vec2f = position
+		localPosition.x -= offsetX
+		localPosition.y -= offsetY
 		
 		If _currentAnimation
 			localImage = _currentAnimation[_frame]
 			
-			canvas.DrawImage(localImage, position, r, scale)
-			
+			canvas.DrawImage(localImage, localPosition, r, scale)
 		Else
 			localImage = _image
 			
-			canvas.DrawImage(localImage, position, r, scale)
+			canvas.DrawImage(localImage, localPosition, r, scale)
 		End
 
-		Local vrWidth  := DiddyApp.GetInstance().Window.VirtualResolution.X
-		Local vrHeight := DiddyApp.GetInstance().Window.VirtualResolution.Y
+		Local vrWidth  :=  DiddyApp.GetInstance().Window.VirtualResolution.X
+		Local vrHeight :=  DiddyApp.GetInstance().Window.VirtualResolution.Y
 		
 		If _wrapImageX
-			If position.X - localImage.Radius < 0 canvas.DrawImage(localImage, position.X + vrWidth, position.Y, r, scale.X, scale.Y)
-			If position.X + localImage.Radius > vrWidth canvas.DrawImage(localImage, position.X - vrWidth, position.Y, r, scale.X, scale.Y)
+			If localPosition.x - localImage.Radius < 0 canvas.DrawImage(localImage, localPosition.x + vrWidth, localPosition.y, r, scale.x, scale.y)
+			If localPosition.x + localImage.Radius > vrWidth canvas.DrawImage(localImage, localPosition.x - vrWidth, localPosition.y, r, scale.x, scale.y)
 		End
 		
 		If _wrapImageY
-			If position.Y - localImage.Radius < 0 canvas.DrawImage(localImage, position.X, position.Y + vrHeight, r, scale.X, scale.Y)
-			If position.Y + localImage.Radius > vrHeight canvas.DrawImage(localImage, position.X, position.Y - vrHeight, r, scale.X, scale.Y)
+			If localPosition.y - localImage.Radius < 0 canvas.DrawImage(localImage, localPosition.x, localPosition.y + vrHeight, r, scale.x, scale.y)
+			If localPosition.y + localImage.Radius > vrHeight canvas.DrawImage(localImage, localPosition.x, localPosition.y - vrHeight, r, scale.x, scale.y)
 		End
 		
 		canvas.Color = canvasColor
@@ -232,5 +235,9 @@ Public
 		Local ts:Int = _startFrame
 		_startFrame = _maxFrame
 		_maxFrame = ts
+	End
+	
+	Property Window:DiddyWindow()
+		Return DiddyApp.GetInstance().Window
 	End
 End
