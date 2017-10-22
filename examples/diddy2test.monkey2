@@ -20,7 +20,7 @@ Using std..
 
 ' the Main function
 Function Main()
-	' Create a Diddy2 App with a 800 x 600 window with filtering turned off for images
+	' Create a Diddy2 App with a 800 x 600 window with a virtual resolution of 640 x 480 and filtering turned off for images
 	New MyDiddyApp("Diddy 2!", 800, 600, 640, 480, False)
 End
 
