@@ -10,6 +10,8 @@ Private
 Public
 	Const EMPTY_SCREEN:String = "EmptyScreen"
 	Const EXIT_SCREEN:String = "ExitScreen"
+	Const GAME_SCREEN:String = "GameScreen"
+	Const TITLE_SCREEN:String = "TitleScreen"
 	
 	Property ScreenBank:ScreenBank()
 		Return _screenBank
