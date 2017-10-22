@@ -44,7 +44,7 @@ Class MyDiddyApp Extends DiddyApp
 		AssetBank.LoadSound("GraveyardShift.ogg")
 	End
 	
-	' load the images and sounds into the ScreenBank
+	' create the screens and add them to the ScreenBank
 	Method CreateScreens()
 		AddScreen(New TitleScreen(Screen.TITLE_SCREEN))
 		AddScreen(New GameScreen(Screen.GAME_SCREEN))
