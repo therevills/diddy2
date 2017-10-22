@@ -8,7 +8,9 @@ Private
 	Field _allowUpdatesInFade:Bool = False
 	
 Public
-
+	Const EMPTY_SCREEN:String = "EmptyScreen"
+	Const EXIT_SCREEN:String = "ExitScreen"
+	
 	Property ScreenBank:ScreenBank()
 		Return _screenBank
 	Setter(screenBank:ScreenBank)
@@ -111,7 +113,6 @@ Class EmptyScreen Extends Screen
 			canvas.Clear(Color.Black)
 			cleared = True
 		End
-		canvas.DrawText("TEST!", 100, 100)
 	End
 End
 

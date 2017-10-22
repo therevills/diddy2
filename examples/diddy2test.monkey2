@@ -25,12 +25,15 @@ Function Main()
 End
 
 Class MyDiddyApp Extends DiddyApp
+	Const GAME_SCREEN:String = "GameScreen"
+	Const TITLE_SCREEN:String = "TitleScreen"
+	
 	Method New(title:String, width:Int, height:Int, filterTextures:Bool = True)
 		Super.New(title, width, height, filterTextures)
 		SetDebug(True)
 		LoadAssets()
 		CreateScreens()
-		Start(GetScreen("TitleScreen"))
+		Start(GetScreen(MyDiddyApp.TITLE_SCREEN))
 	End
 	
 	' load the images and sounds into the AssetBank
@@ -46,8 +49,8 @@ Class MyDiddyApp Extends DiddyApp
 	
 	' load the images and sounds into the ScreenBank
 	Method CreateScreens()
-		AddScreen(New TitleScreen("TitleScreen"))
-		AddScreen(New GameScreen("GameScreen"))
+		AddScreen(New TitleScreen(MyDiddyApp.TITLE_SCREEN))
+		AddScreen(New GameScreen(MyDiddyApp.GAME_SCREEN))
 	End
 End
 
@@ -97,11 +100,11 @@ Class TitleScreen Extends Screen
 		SoundTest()
 
 		If Keyboard.KeyDown(Key.Escape)
-			MoveToScreen(ScreenBank.GetScreen("Exit"))
+			MoveToScreen(ScreenBank.GetScreen(Screen.EXIT_SCREEN))
 		End
 		
 		If Keyboard.KeyDown(Key.Space)
-			MoveToScreen(ScreenBank.GetScreen("GameScreen"))
+			MoveToScreen(ScreenBank.GetScreen(MyDiddyApp.GAME_SCREEN))
 			shootSound.Play()
 		End
 	End
@@ -244,7 +247,7 @@ Class GameScreen Extends Screen
 		scrollingPlayer.Update(fixedRate, False)
 		
 		If Keyboard.KeyDown(Key.Escape)
-			MoveToScreen(ScreenBank.GetScreen("TitleScreen"))
+			MoveToScreen(ScreenBank.GetScreen(MyDiddyApp.TITLE_SCREEN))
 		End
 	End
 End

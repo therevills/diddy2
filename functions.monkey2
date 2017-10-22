@@ -21,3 +21,11 @@ Function TileImage(canvas:Canvas, image:Image, cameraX:Float, cameraY:Float, wid
 	Next
 	canvas.PopMatrix()
 End
+
+Function BoolToString:String(inbool:Bool)
+	If inbool
+		Return "True"
+	Else
+		Return "False"
+	End
+End

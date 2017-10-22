@@ -40,8 +40,8 @@ Public
 	
 	Method CreateScreenBank(app:DiddyApp)
 		Self._screenBank = New ScreenBank(app)
-		Self._screenBank.AddScreen(New EmptyScreen("Empty"))
-		Self._screenBank.AddScreen(New ExitScreen("Exit"))
+		Self._screenBank.AddScreen(New EmptyScreen(Screen.EMPTY_SCREEN))
+		Self._screenBank.AddScreen(New ExitScreen(Screen.EXIT_SCREEN))
 	End
 	
 	Property VirtualResolution:Vec2i()
@@ -79,7 +79,7 @@ Public
 	End
 	
 	Method Start(screen:Screen)
-		Local s:Screen = _screenBank.GetScreen("Empty")
+		Local s:Screen = _screenBank.GetScreen(Screen.EMPTY_SCREEN)
 		s.SetDestinationScreen(screen)
 		s.AllowUpdatesInFade = True
 		NextScreen = screen
