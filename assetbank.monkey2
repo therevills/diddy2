@@ -17,8 +17,7 @@ Public
 		_filterTextures = filterTextures
 	End
 
-	Method LoadImage:Image(fileName:String, setMidHandle:Bool = True)
-		Print "adding " + fileName
+	Method LoadImage:Image(fileName:String, setMidHandle:Bool = True, addToBank:Bool = True)
 		Local path:String = _prefix + _imagePath + fileName
 		Local image:Image = Image.Load(path)
 		If Not image
@@ -31,9 +30,10 @@ Public
 		If Not _filterTextures
 			image.Texture.Flags = TextureFlags.None
 		End
-		
-		Local imageAsset := New ImageAsset(fileName.ToUpper(), image)
-		Set(fileName.ToUpper(), imageAsset)
+		If addToBank
+			Local imageAsset := New ImageAsset(fileName.ToUpper(), image)
+			Set(fileName.ToUpper(), imageAsset)
+		End
 		Return image
 	End
 	
@@ -114,9 +114,7 @@ Public
 							End
 							
 							' Print name + " x = " + x + " y = " + y + " width = " + width + " height = " + height
-							
-							
-							
+
 							local rect := New Recti(x, y, x + width, y + height)
 							Local image:Image = New Image(pointer, rect)
 							
@@ -152,9 +150,9 @@ Public
 	Method GetImage:Image(name:String, autoLoad:Bool = False, setMidHandle:Bool = True)
 		name = name.ToUpper()
 		Local asset:Asset = Get(name)
-		
 		Local imageAsset:ImageAsset = Cast<ImageAsset>(asset)
-		If imageAsset = Null
+
+		If Not imageAsset 
 			If autoLoad
 				Local image:Image = LoadImage(name, setMidHandle)
 				imageAsset = New ImageAsset(name.ToUpper(), image)

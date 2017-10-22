@@ -182,12 +182,10 @@ Public
 		_maxScrollY = maxScrollY
 	End
 	
-	Method ScrollHorizontal(amount:Float)
-		_scrollX += amount
-		If _scrollX < 0 Then
-			_scrollX = 0
-		Else
-			If _scrollX > _maxScrollX Then _scrollX = _maxScrollX
-		EndIf
+	Method Scroll(amountX:Float, amountY:Float = 0)
+		_scrollX += amountX
+		_scrollY += amountY
+		_scrollX = Clamp(_scrollX, 0.0, _maxScrollX)
+		_scrollY = Clamp(_scrollY, 0.0, _maxScrollY)
 	End
 End

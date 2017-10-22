@@ -205,7 +205,6 @@ Class GameScreen Extends Screen
 	
 	Method Render(canvas:Canvas, tween:Float) Override
 		TileImage(canvas, background, Window.ScrollX, Window.ScrollY, Window.VirtualResolution.x, Window.VirtualResolution.Y)
-		'canvas.DrawImage(background, -Window.ScrollX, Window.ScrollY)
 		animationSprite.Render(canvas)
 		player.Render(canvas)
 		scrollingPlayer.Render(canvas, Window.ScrollX, Window.ScrollY)
