@@ -21,12 +21,12 @@ Using std..
 ' the Main function
 Function Main()
 	' Create a Diddy2 App with a 800 x 600 window with filtering turned off for images
-	New MyDiddyApp("Diddy 2!", 800, 600, False)
+	New MyDiddyApp("Diddy 2!", 800, 600, 640, 480, False)
 End
 
 Class MyDiddyApp Extends DiddyApp
-	Method New(title:String, width:Int, height:Int, filterTextures:Bool = True)
-		Super.New(title, width, height, filterTextures)
+	Method New(title:String, width:Int, height:Int, virtualResolutionWidth:Int, virtualResolutionHeight:Int, filterTextures:Bool = True)
+		Super.New(title, width, height, virtualResolutionWidth, virtualResolutionHeight, filterTextures)
 		SetDebug(True)
 		LoadAssets()
 		CreateScreens()

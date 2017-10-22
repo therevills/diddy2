@@ -23,15 +23,16 @@ Public
 	Global GameTime:FixedRateLogicTimer
 	Global instance:DiddyWindow = null
 
-	Method New(title:String, width:Int, height:Int, flags:WindowFlags = WindowFlags.Resizable)
+	Method New(title:String, width:Int, height:Int, virtualResolutionWidth:Int, virtualResolutionHeight:Int, flags:WindowFlags = WindowFlags.Resizable, layout:String = "letterbox", fps:Int = 60, swapInterval:Int = 1)
 		Super.New(title, width, height, flags)
-		Layout = "letterbox"
-		SetVirtualResolution(width, height)
+		Layout = layout
+		SetVirtualResolution(virtualResolutionWidth, virtualResolutionHeight)
 		_maxScrollX = width
 		_maxScrollY = height
+		_fps = fps
 		_dt = New DeltaTimer(_fps)
 		Self._screenFade = New ScreenFade(width, height)
-		SwapInterval = 1
+		SwapInterval = swapInterval
 		GenerateSeed()
 		ClearColor = Color.Black
 		instance = Self

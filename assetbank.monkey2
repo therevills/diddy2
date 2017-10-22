@@ -18,6 +18,7 @@ Public
 	End
 
 	Method LoadImage:Image(fileName:String, setMidHandle:Bool = True)
+		Print "adding " + fileName
 		Local path:String = _prefix + _imagePath + fileName
 		Local image:Image = Image.Load(path)
 		If Not image
@@ -73,7 +74,9 @@ Public
 					End
 					attrib = attrib.NextAttribute()
 				End
-	
+				
+				Local pointer:Image = LoadImage(spriteFileName, False)
+				
 				If Not xmlChild.NoChildren()
 					
 					Local xmlChildren := xmlChild.FirstChild()
@@ -112,7 +115,7 @@ Public
 							
 							' Print name + " x = " + x + " y = " + y + " width = " + width + " height = " + height
 							
-							Local pointer:Image = LoadImage(spriteFileName, False)
+							
 							
 							local rect := New Recti(x, y, x + width, y + height)
 							Local image:Image = New Image(pointer, rect)
@@ -146,15 +149,21 @@ Public
 		Set(fileName.ToUpper(), soundAsset)
 	End
 	
-	Method GetImage:Image(name:String)
+	Method GetImage:Image(name:String, autoLoad:Bool = False, setMidHandle:Bool = True)
 		name = name.ToUpper()
 		Local asset:Asset = Get(name)
 		
 		Local imageAsset:ImageAsset = Cast<ImageAsset>(asset)
 		If imageAsset = Null
-			Print("Image '" + name + "' not found in the AssetBank")
-			Print(ToString())
-			App.Terminate()
+			If autoLoad
+				Local image:Image = LoadImage(name, setMidHandle)
+				imageAsset = New ImageAsset(name.ToUpper(), image)
+				
+			Else
+				Print("Image '" + name + "' not found in the AssetBank")
+				Print(ToString())
+				App.Terminate()
+			End
 		End
 		Return imageAsset.RawImage
 	End
