@@ -180,7 +180,7 @@ Public
 				While GameTime.LogicUpdateRequired()
 					GameLogic(GameTime.GetLogicFPS())
 				End
-				GameTime.GetTween()
+				tween = GameTime.GetTween()
 			End
 			If _updateMode = UpdateModeFlag.DELTA
 				_dt.UpdateDelta()
