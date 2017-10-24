@@ -298,10 +298,10 @@ Class ScrollingPlayer Extends Player
 		
 		Local border:Int = 200
 		If position.x - Window.ScrollX < border
-			Window.ScrollHorizontal((position.x - Window.ScrollX) - border)
+			Window.Scroll((position.x - Window.ScrollX) - border)
 		End
 		If position.x - Window.ScrollX > Window.VirtualResolution.X - border
-			Window.ScrollHorizontal((position.x - Window.ScrollX) - (Window.VirtualResolution.X - border))
+			Window.Scroll((position.x - Window.ScrollX) - (Window.VirtualResolution.X - border))
 		End
 		If position.x - Window.ScrollX > Window.VirtualResolution.X - Image.Width
 			position.x = Window.VirtualResolution.X + Window.ScrollX - Image.Width
