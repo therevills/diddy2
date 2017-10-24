@@ -27,7 +27,7 @@ End
 Class MyDiddyApp Extends DiddyApp
 	Method New(title:String, width:Int, height:Int, virtualResolutionWidth:Int, virtualResolutionHeight:Int, filterTextures:Bool = True)
 		Super.New(title, width, height, virtualResolutionWidth, virtualResolutionHeight, filterTextures)
-		SetDebug(False)
+		SetDebug(True)
 		LoadAssets()
 		CreateScreens()
 		Start(GetScreen(Screen.TITLE_SCREEN))
@@ -223,13 +223,25 @@ Class Player Extends Sprite
 	Const DIE:Int = 2
 	Const TURNING:Int = 3
 
-	Const GRAVITY:Float = 650
+	Field gravity:Float
 	
 	Method New(img:Image, position:Vec2f, level:Level)	
 		Super.New(img, position)
 		_level = level
 		
-		speed = New Vec2f(160, 450)
+		Select Window.UpdateMode
+			Case Window.UpdateModeFlag.FRL
+				speed = New Vec2f(160, 450)
+				gravity = 650
+			Case Window.UpdateModeFlag.TIMER
+				speed = New Vec2f(2, 10)
+				gravity = 0.3
+			Case Window.UpdateModeFlag.DELTA
+				speed = New Vec2f(2, 10)
+				gravity = 0.3
+		End
+		
+		
 		deltaValue = New Vec2f(0, 0)
 		
 		' standing still
@@ -380,7 +392,7 @@ Class Player Extends Sprite
 		
 			If _jumping
 				SetupJumpAnimation()
-				deltaValue.y += GRAVITY * fixedRate
+				deltaValue.y += gravity * fixedRate
 				Local tempY := position.y + (deltaValue.y * fixedRate)
 				If deltaValue.y <> 0
 					If deltaValue.y > 0
@@ -399,7 +411,7 @@ Class Player Extends Sprite
 							
 							If tileData[0] = 92 Or tileData[0] = 93 Or tileData[1] = 92 Or tileData[1] = 93 Or tileData[2] = 92 Or tileData[2] = 93
 								SetupDieAnimation()
-								deltaValue.y = -430
+								deltaValue.y = -speed.y * 1.1
 							End
 							
 						Else
@@ -418,7 +430,7 @@ Class Player Extends Sprite
 					
 			End
 		Else
-			deltaValue.y += GRAVITY * fixedRate
+			deltaValue.y += gravity * fixedRate
 			position.y += (deltaValue.y * fixedRate)
 			If _direction = RIGHT
 				position.x += (speed.x / 2) * fixedRate

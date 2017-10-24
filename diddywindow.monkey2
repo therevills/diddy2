@@ -16,9 +16,18 @@ Private
 	Field _scrollY:Float
 	Field _maxScrollX:Float
 	Field _maxScrollY:Float
+	Field _timer:Timer
+	Field _updateMode:Int
+	Field _paused:Bool
 Public
 	Const UPDATE_FREQUENCY:Float = 100.0
 	Const SPIKE_SUPPRESSION:Int = 10
+	
+	Enum UpdateModeFlag
+		FRL
+		TIMER
+		DELTA
+	End	
 	
 	Global GameTime:FixedRateLogicTimer
 	Global instance:DiddyWindow = null
@@ -38,7 +47,24 @@ Public
 		instance = Self
 		GameTime = New FixedRateLogicTimer(UPDATE_FREQUENCY, SPIKE_SUPPRESSION)
 	End
-	
+
+	Property UpdateMode:Int()
+		Return _updateMode
+	Setter(mode:Int)
+		_updateMode = mode
+		Select mode
+			Case UpdateModeFlag.FRL
+			Case UpdateModeFlag.DELTA
+			Case UpdateModeFlag.TIMER
+				_timer = New Timer(_fps, OnUpdate)
+		End	
+		
+	End
+
+	Method Paused:Bool()
+		Return _paused
+	End
+
 	Method CreateScreenBank(app:DiddyApp)
 		Self._screenBank = New ScreenBank(app)
 		Self._screenBank.AddScreen(New EmptyScreen(Screen.EMPTY_SCREEN))
@@ -113,8 +139,10 @@ Public
 	
 	Method RenderDebug(canvas:Canvas)
 		If _debugOn
-			GameTime.ShowFPS(0, canvas.Viewport.Height, canvas)
-			GameTime.ShowSpikeSuppression(canvas.Viewport.Width - 230, canvas.Viewport.Height, canvas)
+			If _updateMode = UpdateModeFlag.FRL
+				GameTime.ShowFPS(0, canvas.Viewport.Height, canvas)
+				GameTime.ShowSpikeSuppression(canvas.Viewport.Width - 230, canvas.Viewport.Height, canvas)
+			End
 			
 			Local x:Int = 0
 			Local y:Int = 0
@@ -124,17 +152,47 @@ Public
 			canvas.DrawText("Sound Volume  : " + DiddyApp.GetInstance().SoundVolume, x, y)
 			y += gap
 			canvas.DrawText("Music Volume  : " + DiddyApp.GetInstance().MusicVolume, x, y)
+			y += gap
+			canvas.DrawText("Update Mode   : " + GetUpdateMode(), x, y)
 		End
 	End
 	
+	Method GetUpdateMode:String()
+		Local rv:String = ""
+		Select _updateMode
+			Case UpdateModeFlag.FRL
+				rv = "FRL"
+			Case UpdateModeFlag.DELTA
+				rv = "DELTA"
+			Case UpdateModeFlag.TIMER
+				rv = "TIMER"
+		End	
+		Return rv
+	End
+	
 	Method OnRender(canvas:Canvas) Override
-		App.RequestRender()
-		Local delta:Float = GameTime.ProcessTime()
-		While GameTime.LogicUpdateRequired()
-			GameLogic(GameTime.GetLogicFPS())
+		Local tween:Float
+		If _paused
+			GameTime.oldTime = Millisecs()
+		Else
+			If _updateMode = UpdateModeFlag.FRL
+				Local delta:Float = GameTime.ProcessTime()
+				While GameTime.LogicUpdateRequired()
+					GameLogic(GameTime.GetLogicFPS())
+				End
+				GameTime.GetTween()
+			End
+			If _updateMode = UpdateModeFlag.DELTA
+				_dt.UpdateDelta()
+				GameLogic(_dt.delta)
+			End
 		End
-		Local tween:Float = GameTime.GetTween()
+		App.RequestRender()
 		GameRender(canvas, tween)
+	End
+	
+	Method OnUpdate()
+		GameLogic(1)
 	End
 	
 	Method OnMeasure:Vec2i() Override
@@ -143,13 +201,18 @@ Public
 	
 	Method OnWindowEvent(event:WindowEvent) Override
 		Select event.Type
-			Case EventType.WindowMoved
+			Case EventType.WindowMoved	
 			Case EventType.WindowResized
 				App.RequestRender()
 			Case EventType.WindowGainedFocus
+				_paused = False
+				If _timer _timer.Suspended = False
 			Case EventType.WindowLostFocus
+				_paused = True
+				GameTime.oldTime = Millisecs()
+				If _timer _timer.Suspended = True
 			Default
-				Super.OnWindowEvent(event)
+				Super.OnWindowEvent( event )
 		End
 	End
 	
