@@ -9,6 +9,7 @@ Private
 	Field _prefix:String = "asset::"
 	Field _imagePath:String = "graphics/"
 	Field _soundPath:String = "sounds/"
+	Field _fontPath:String = "fonts/"
 	Field _filterTextures:Bool
 Public
 	Const SPARROW_ATLAS:Int = 0
@@ -17,6 +18,30 @@ Public
 		_filterTextures = filterTextures
 	End
 
+	Method LoadFont(fileName:String, size:Int)
+		Local path:String = _prefix + _fontPath + fileName
+		Local fnt:Font = Font.Load(path, size)
+		If Not fnt
+			Print("Error: Can not load font: " + path)
+			App.Terminate()
+		End
+		Local fontAsset := New FontAsset(fileName.ToUpper(), fnt)
+		Set(fileName.ToUpper(), fontAsset)
+	End
+	
+	Method GetFont:Font(name:String)
+		name = name.ToUpper()
+		Local asset:Asset = Get(name)
+		
+		Local fontAsset:FontAsset = Cast<FontAsset>(asset)
+		If fontAsset = Null
+			Print("Font '" + name + "' not found in the AssetBank")
+			Print(ToString())
+			App.Terminate()
+		End
+		Return fontAsset.RawFont
+	End
+	
 	Method LoadImage:Image(fileName:String, setMidHandle:Bool = True, addToBank:Bool = True)
 		Local path:String = _prefix + _imagePath + fileName
 		Local image:Image = Image.Load(path)
@@ -201,6 +226,21 @@ Public
 		Self._name = name
 	End
 End
+
+Class FontAsset Extends Asset
+Private
+	Field _rawFont:Font
+Public
+	Property RawFont:Font()
+		Return Self._rawFont
+	End
+	
+	Method New(name:String, font:Font)
+		Super.New(name)
+		Self._rawFont = font
+	End
+End
+
 
 Class ImageAsset Extends Asset
 Private

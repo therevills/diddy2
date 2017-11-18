@@ -27,6 +27,10 @@ Public
 		Return _screenBank.DiddyApp.Window
 	End
 	
+	Property VirtualResolution:Vec2i()
+		Return _screenBank.DiddyApp.Window.VirtualResolution
+	End
+	
 	Property AssetBank:AssetBank()
 		Return _screenBank.DiddyApp.AssetBank
 	End

@@ -38,7 +38,7 @@ Public
 		_animationBank = New AnimationBank
 	End
 	
-	Method Render(canvas:Canvas, offsetX:Float = 0, offsetY:Float = 0)
+	Method Render(canvas:Canvas, offsetX:Float = 0, offsetY:Float = 0) virtual
 		Local canvasColor := canvas.Color
 		Local canvasAlpha := canvas.Alpha
 		
