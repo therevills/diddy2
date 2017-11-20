@@ -12,7 +12,10 @@ Public
 	Const EXIT_SCREEN:String = "ExitScreen"
 	Const GAME_SCREEN:String = "GameScreen"
 	Const TITLE_SCREEN:String = "TitleScreen"
-	
+	Const OPTIONS_SCREEN:String = "OptionsScreen"
+	Const GAME_OVER_SCREEN:String = "GameOverScreen"
+	Const LEVEL_SELECT_SCREEN:String = "LevelSelectScreen"
+
 	Property ScreenBank:ScreenBank()
 		Return _screenBank
 	Setter(screenBank:ScreenBank)

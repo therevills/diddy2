@@ -14,7 +14,7 @@ Public
 	Method New(title:String, width:Int, height:Int, virtualResolutionWidth:Int, virtualResolutionHeight:Int, filterTextures:Bool = True, flags:WindowFlags = WindowFlags.Resizable, layout:String = "letterbox", fps:Int = 60, swapInterval:Int = 1)
 		New AppInstance
 		_Instance = Self
-		_window = New DiddyWindow(title, width, height, virtualResolutionWidth, virtualResolutionHeight, flags, layout, fps, swapInterval)
+		_window = New DiddyWindow(title, width, height, virtualResolutionWidth, virtualResolutionHeight, filterTextures, flags, layout, fps, swapInterval)
 		_assetBank = New AssetBank(filterTextures)
 		_filterTextures = filterTextures
 		_channelManager = New ChannelManager

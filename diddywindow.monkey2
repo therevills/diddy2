@@ -19,6 +19,8 @@ Private
 	Field _timer:Timer
 	Field _updateMode:Int
 	Field _paused:Bool
+	Field _filterTextures:Bool
+	Field _filterUpdated:Bool
 Public
 	Const UPDATE_FREQUENCY:Float = 100.0
 	Const SPIKE_SUPPRESSION:Int = 10
@@ -32,9 +34,10 @@ Public
 	Global GameTime:FixedRateLogicTimer
 	Global instance:DiddyWindow = null
 
-	Method New(title:String, width:Int, height:Int, virtualResolutionWidth:Int, virtualResolutionHeight:Int, flags:WindowFlags = WindowFlags.Resizable, layout:String = "letterbox", fps:Int = 60, swapInterval:Int = 1)
+	Method New(title:String, width:Int, height:Int, virtualResolutionWidth:Int, virtualResolutionHeight:Int, filterTextures:Bool, flags:WindowFlags = WindowFlags.Resizable, layout:String = "letterbox", fps:Int = 60, swapInterval:Int = 1)
 		Super.New(title, width, height, flags)
 		Layout = layout
+		_filterTextures = filterTextures
 		SetVirtualResolution(virtualResolutionWidth, virtualResolutionHeight)
 		_maxScrollX = width
 		_maxScrollY = height
@@ -123,8 +126,10 @@ Public
 			End
 		End
 	End
-	
+
 	Method GameRender(canvas:Canvas, tween:Float)
+		canvas.TextureFilteringEnabled = _filterTextures
+	
 		If _currentScreen
 			_currentScreen.Render(canvas, tween)
 		End

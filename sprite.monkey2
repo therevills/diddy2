@@ -29,6 +29,7 @@ Public
 	Field originPosition:Vec2f
 	Field scale:Vec2f = New Vec2f(1, 1)
 	Field speed:Vec2f = New Vec2f(1, 1)
+	Field velocity:Vec2f = New Vec2f(0, 0)
 	Field deltaValue:Vec2f = New Vec2f(1, 1)
 
 	Method New(image:Image, position:Vec2f)
