@@ -9,10 +9,11 @@ Private
 	Field _soundVolume:Float = 1
 	Field _musicVolume:Float = 1
 	Field _filterTextures:Bool
+	Field _appInstance:AppInstance
 Public
 	
 	Method New(title:String, width:Int, height:Int, virtualResolutionWidth:Int, virtualResolutionHeight:Int, filterTextures:Bool = True, flags:WindowFlags = WindowFlags.Resizable, layout:String = "letterbox", fps:Int = 60, swapInterval:Int = 1)
-		New AppInstance
+		_appInstance = New AppInstance
 		_Instance = Self
 		_window = New DiddyWindow(title, width, height, virtualResolutionWidth, virtualResolutionHeight, filterTextures, flags, layout, fps, swapInterval)
 		_assetBank = New AssetBank(filterTextures)
@@ -41,6 +42,10 @@ Public
 		amount = Clamp(amount, 0.0, 1.0)
 		_musicVolume = amount
 		ChannelManager.SetMusicVolume(_musicVolume)
+	End
+	
+	Property AppInstance:AppInstance()
+		Return _appInstance
 	End
 	
 	Property AssetBank:AssetBank()

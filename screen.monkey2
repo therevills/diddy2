@@ -62,6 +62,7 @@ Public
 		DiddyApp.SetCurrentScreen(Self)
 		Load()
 		Window.ScreenFade.Start(fadeType, fadeTimeMs)
+		DiddyApp.AppInstance.ResetPolledInput()
 		Start()
 	End
 	
