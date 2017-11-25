@@ -253,7 +253,7 @@ Public
 	Method Scroll(amountX:Float, amountY:Float = 0)
 		_scrollX += amountX
 		_scrollY += amountY
-		_scrollX = Clamp(_scrollX, 0.0, _maxScrollX)
-		_scrollY = Clamp(_scrollY, 0.0, _maxScrollY)
+		_scrollX = Clamp(_scrollX, 0.0, _maxScrollX - Width)
+		_scrollY = Clamp(_scrollY, 0.0, _maxScrollY - Height)
 	End
 End

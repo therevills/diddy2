@@ -22,7 +22,7 @@ Private
 	Field _pingPongAnimation:Bool = False
 	Field _pingPongAnimationCounter:Int
 	Field _maxPingPongAnimationCounter:Int = 1
-	
+	Field _speed:Float = 1
 Public
 
 	Field position:Vec2f
@@ -46,7 +46,7 @@ Public
 		canvas.Color = _colour
 		canvas.Alpha = _alpha
 
-		Local r := _rotation - Pi / 2
+		Local r := RotationDisplay
 		
 		Local localImage:Image
 
@@ -81,6 +81,10 @@ Public
 		canvas.Alpha = canvasAlpha
 	End
 	
+	Property RotationDisplay:Float()
+		Return _rotation - Pi / 2
+	End
+	
 	Method RenderDebug(canvas:Canvas)
 		Local y:Int = 10
 		Local gap:Int = canvas.Font.Height
@@ -94,6 +98,14 @@ Public
 		y += gap
 		canvas.DrawText("_frameTimer: " + _frameTimer, 10, y)
 		y += gap
+	End
+
+	Method MoveForward()
+		Local dx:Float = Sin(_rotation) * _speed 
+		Local dy:Float = Cos(_rotation) * _speed
+		
+		position.x += dx
+		position.y += dy
 	End
 
 	Property WrapImageX:Bool()
@@ -144,6 +156,13 @@ Public
 	Setter (color:Color)
 		_colour = color
 	End
+
+	Property Speed:Float()
+		Return _speed
+	Setter (speed:Float)
+		_speed = speed
+	End
+
 
 	Property Rotation:Float()
 		Return _rotation
