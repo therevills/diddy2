@@ -97,8 +97,8 @@ Class GameScreen Extends Screen
 	
 	Method Start() Override
 		level = New Level(1)
-		Window.MaxScrollX = (level.Width * level.TileSize) - Window.VirtualResolution.x
-		Window.MaxScrollY = (level.Height * level.TileSize) - Window.VirtualResolution.y
+		Window.MaxScrollX = (level.Width * level.TileSize) 
+		Window.MaxScrollY = (level.Height * level.TileSize) 
 		player  = New Player(AssetBank.GetImage("gripe.stand_right"), level.PlayerStart, level)
 		player.Scroll()
 	End
@@ -438,7 +438,7 @@ Class Player Extends Sprite
 				position.x -= (speed.x / 2) * fixedRate
 			End
 			If position.y - Window.ScrollY > Window.VirtualResolution.y  + 200
-				DiddyApp.GetInstance().Window.CurrentScreen.MoveToScreen(DiddyApp.GetInstance().Window.ScreenBank.GetScreen(Screen.TITLE_SCREEN))
+				DiddyApp.GetWindow().CurrentScreen.MoveToScreen(DiddyApp.GetScreenFunc(Screen.TITLE_SCREEN))
 			End
 		End
 		Scroll()
@@ -470,7 +470,7 @@ Class Player Extends Sprite
 	
 	Property Jumping:Bool()
 		Return _jumping
-	Setter(jumping:Int)
+	Setter(jumping:Bool)
 		_jumping = jumping
 	End
 End

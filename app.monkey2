@@ -52,12 +52,28 @@ Public
 		Return _assetBank
 	End
 	
+	Function GetAssetBank:AssetBank()
+		Return GetInstance()._assetBank
+	End
+	
 	Property ChannelManager:ChannelManager()
 		Return _channelManager
 	End
 	
 	Property Window:DiddyWindow()
 		Return _window
+	End
+	
+	Function GetWindow:DiddyWindow()
+		Return GetInstance()._window
+	End
+	
+	Function GetScreenBank:ScreenBank()
+		Return GetInstance()._window.ScreenBank
+	End
+	
+	Function GetScreenFunc:Screen(screen:String)
+		Return GetInstance()._window.ScreenBank.GetScreen(screen)
 	End
 	
 	Method Start(screen:Screen)
