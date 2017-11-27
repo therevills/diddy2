@@ -23,23 +23,23 @@ Public
 	End
 	
 	Property DiddyApp:DiddyApp()
-		Return _screenBank.DiddyApp
+		Return DiddyApp.GetInstance()
 	End
 	
 	Property Window:DiddyWindow()
-		Return _screenBank.DiddyApp.Window
+		Return DiddyApp.GetInstance().Window
 	End
 	
 	Property VirtualResolution:Vec2i()
-		Return _screenBank.DiddyApp.Window.VirtualResolution
+		Return DiddyApp.GetInstance().Window.VirtualResolution
 	End
 	
 	Property AssetBank:AssetBank()
-		Return _screenBank.DiddyApp.AssetBank
+		Return DiddyApp.GetInstance().AssetBank
 	End
 	
 	Property ChannelManager:ChannelManager()
-		Return _screenBank.DiddyApp.ChannelManager
+		Return DiddyApp.GetInstance().ChannelManager
 	End
 	
 	Property Name:String()
@@ -73,6 +73,9 @@ Public
 	End
 	
 	Method Start() Abstract
+
+	Method PreRender(canvas:Canvas, tween:Float) Virtual
+	End
 	
 	Method Render(canvas:Canvas, tween:Float) Abstract
 	

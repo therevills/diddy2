@@ -131,13 +131,13 @@ Public
 		canvas.TextureFilteringEnabled = _filterTextures
 	
 		If _currentScreen
+			_currentScreen.PreRender(canvas, tween)
 			_currentScreen.Render(canvas, tween)
+			_currentScreen.PostRender(canvas, tween)
 		End
+
 		If _screenFade.Active
 			_screenFade.Render(canvas)
-		End
-		If _currentScreen
-			_currentScreen.PostRender(canvas, tween)
 		End
 		RenderDebug(canvas)
 	End

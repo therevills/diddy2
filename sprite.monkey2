@@ -39,7 +39,7 @@ Public
 		_animationBank = New AnimationBank
 	End
 	
-	Method Render(canvas:Canvas, offsetX:Float = 0, offsetY:Float = 0) virtual
+	Method Render(canvas:Canvas, offsetX:Float = 0, offsetY:Float = 0, roundPosition:Bool = False, roundRotation:Bool = False) Virtual
 		Local canvasColor := canvas.Color
 		Local canvasAlpha := canvas.Alpha
 		
@@ -53,6 +53,14 @@ Public
 		Local localPosition:Vec2f = position
 		localPosition.x -= offsetX
 		localPosition.y -= offsetY
+		
+		If roundPosition
+			localPosition.x = Int(localPosition.x)
+			localPosition.y = Int(localPosition.y)
+		End
+		If roundRotation
+			r = Int(r)
+		End
 		
 		If _currentAnimation
 			localImage = _currentAnimation[_frame]
