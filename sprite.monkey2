@@ -24,7 +24,7 @@ Private
 	Field _maxPingPongAnimationCounter:Int = 1
 	Field _speed:Float = 1
 Public
-
+	
 	Field position:Vec2f
 	Field originPosition:Vec2f
 	Field scale:Vec2f = New Vec2f(1, 1)
@@ -59,30 +59,36 @@ Public
 			localPosition.y = Int(localPosition.y)
 		End
 		If roundRotation
-			r = Int(r)
+			Local d := ToDegrees(r)
+			d = Int(d)
+			r = ToRadians(d)
 		End
 		
+		Local s := scale
+
 		If _currentAnimation
 			localImage = _currentAnimation[_frame]
 			
-			canvas.DrawImage(localImage, localPosition, r, scale)
+			canvas.DrawImage(localImage, localPosition, r, s)
 		Else
 			localImage = _image
 			
-			canvas.DrawImage(localImage, localPosition, r, scale)
+			canvas.DrawImage(localImage, localPosition, r, s)
 		End
+
+		
 
 		Local vrWidth  :=  DiddyApp.GetInstance().Window.VirtualResolution.X
 		Local vrHeight :=  DiddyApp.GetInstance().Window.VirtualResolution.Y
 		
 		If _wrapImageX
-			If localPosition.x - localImage.Radius < 0 canvas.DrawImage(localImage, localPosition.x + vrWidth, localPosition.y, r, scale.x, scale.y)
-			If localPosition.x + localImage.Radius > vrWidth canvas.DrawImage(localImage, localPosition.x - vrWidth, localPosition.y, r, scale.x, scale.y)
+			If localPosition.x - localImage.Radius < 0 canvas.DrawImage(localImage, localPosition.x + vrWidth, localPosition.y, r, s.x, s.y)
+			If localPosition.x + localImage.Radius > vrWidth canvas.DrawImage(localImage, localPosition.x - vrWidth, localPosition.y, r, s.x, s.y)
 		End
 		
 		If _wrapImageY
-			If localPosition.y - localImage.Radius < 0 canvas.DrawImage(localImage, localPosition.x, localPosition.y + vrHeight, r, scale.x, scale.y)
-			If localPosition.y + localImage.Radius > vrHeight canvas.DrawImage(localImage, localPosition.x, localPosition.y - vrHeight, r, scale.x, scale.y)
+			If localPosition.y - localImage.Radius < 0 canvas.DrawImage(localImage, localPosition.x, localPosition.y + vrHeight, r, s.x, s.y)
+			If localPosition.y + localImage.Radius > vrHeight canvas.DrawImage(localImage, localPosition.x, localPosition.y - vrHeight, r, s.x, s.y)
 		End
 		
 		canvas.Color = canvasColor
@@ -175,7 +181,7 @@ Public
 	Property Rotation:Float()
 		Return _rotation
 	Setter (rotation:Float)
-		_rotation = rotation
+		_rotation = rotation Mod TwoPi
 	End
 
 	Property Alpha:Float()

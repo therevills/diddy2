@@ -15,7 +15,7 @@ Public
 		
 	Method CheckAnimationExists(nameOfAnimation:String, frames:Image[])
 		If frames.Length = 0 Then
-			Print "Cannot find animation " + nameOfAnimation.ToUpper()
+			Print "Cannot find animation " + nameOfAnimation.ToUpper() + " or lenght is zero"
 			Print(ToString())
 			App.Terminate()
 		End
