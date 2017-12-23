@@ -43,7 +43,7 @@ Public
 		_maxScrollY = height
 		_fps = fps
 		_dt = New DeltaTimer(_fps)
-		Self._screenFade = New ScreenFade(width, height)
+		Self._screenFade = New ScreenFade(virtualResolutionWidth, virtualResolutionHeight)
 		SwapInterval = swapInterval
 		GenerateSeed()
 		ClearColor = Color.Black
@@ -250,10 +250,14 @@ Public
 		_maxScrollY = maxScrollY
 	End
 	
-	Method Scroll(amountX:Float, amountY:Float = 0)
-		_scrollX += amountX
-		_scrollY += amountY
-		_scrollX = Clamp(_scrollX, 0.0, _maxScrollX - Width)
-		_scrollY = Clamp(_scrollY, 0.0, _maxScrollY - Height)
+	Method Scroll(amountX:Float, amountY:Float = 0, round:Bool = False)
+		ScrollX += amountX
+		ScrollY += amountY
+		If round
+			ScrollX = Floor(ScrollX + 0.5)
+			ScrollY = Floor(ScrollY + 0.5)
+		End
+		ScrollX = Clamp(ScrollX, 0.0, _maxScrollX - Width)
+		ScrollY = Clamp(ScrollY, 0.0, _maxScrollY - Height)
 	End
 End

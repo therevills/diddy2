@@ -16,11 +16,18 @@ Private
 	Field _fadeSound:Bool
 	Field _startTime:Int
 	Field _debug:Bool = False
+	
+	
 Public
 	Const FADE_IN:Int = 0
 	Const FADE_OUT:Int = 1
+	Const EFFECT_FADE:Int = 0
+	Const EFFECT_PIXEL_FILL:Int = 1
+	Global Effect:Int = EFFECT_FADE
 	Global DefaultFadeTimeMs:Float = 500
-
+	Field pixelCount:Int
+	Field pixels:Int[,]
+	
 	Property Active:Bool()
 		Return _active
 	End		
@@ -28,6 +35,7 @@ Public
 	Method New(width:Int, height:Int)
 		Self._width = width
 		Self._height = height
+		Self.pixels = New Int[Self._width, Self._height]
 	End
 	
 	Method Start(fadeType:Int = FADE_IN, fadeTimeMs:Float = DefaultFadeTimeMs, fadeSound:Bool = True, fadeMusic:Bool = True)
@@ -39,14 +47,26 @@ Public
 		_fadeSound = fadeSound
 		
 		If _fadeType = FADE_OUT
+			For Local y:Int = 0 Until _height
+				For Local x:Int = 0 Until _width
+					pixels[x, y] = 0 
+				Next
+			Next
 			_ratio = 1
 			If Not DiddyApp.GetInstance().Window.NextScreen
 				Print "NextScreen is NULL, set NextScreen before calling Start with FADE_OUT"
 				App.Terminate()
 			End
 		Else
+			For Local y:Int = 0 Until _height
+				For Local x:Int = 0 Until _width
+					pixels[x, y] = 1 
+				Next
+			Next
+				
 			_ratio = 0	
-		End
+		End	
+		pixelCount = 0
 		_counter = 0
 		_startTime = Millisecs()
 	End
@@ -61,6 +81,40 @@ Public
 
 		_counter += 1 + fixedRate
 		CalcRatio()
+		If Effect = EFFECT_PIXEL_FILL
+			Local completeRatioAmount:Bool = False
+
+			Local screenPixelCount:Float = _width * _height - 0.1
+			While Not completeRatioAmount
+
+				For Local i:Int = 0 To 1200
+					Local x:Int = Rnd(0, _width)
+					Local y:Int = Rnd(0, _height)
+					If _fadeType = FADE_OUT
+						If pixels[x, y] = 0
+							pixels[x, y] = 1
+							pixelCount +=1
+						End
+					Else
+						If pixels[x, y] = 1
+							pixels[x, y] = 0
+							pixelCount +=1
+						End
+					End
+				End
+				If pixelCount > screenPixelCount Then pixelCount = screenPixelCount
+
+				Local r:Float = pixelCount / screenPixelCount
+				r = Clamp(r, 0.0, 1.0)
+				If _fadeType = FADE_OUT
+					r = 1 - r
+					If r <= _ratio Or FloatEqual(r, _ratio, 0.01) Then completeRatioAmount = True
+				Else
+					If r >= _ratio Or FloatEqual(r, _ratio, 0.01) Then completeRatioAmount = True
+				End
+
+			End
+		End
 		
 		If _fadeSound
 			For Local i:Int = 0 Until ChannelManager.MAX_CHANNELS
@@ -96,11 +150,27 @@ Public
 	
 	Method Render(canvas:Canvas)
 		If Not _active Return
-		canvas.Color = _fadeColor
-		canvas.Alpha = 1 - _ratio
-		canvas.DrawRect(0, 0, _width, _height)
-		canvas.Alpha = 1
-		canvas.Color = _currentColor
+		Select Effect
+			Case EFFECT_FADE
+				canvas.Color = _fadeColor
+				canvas.Alpha = 1 - _ratio
+				canvas.DrawRect(0, 0, _width, _height)
+				canvas.Alpha = 1
+				canvas.Color = _currentColor
+			Case EFFECT_PIXEL_FILL
+				canvas.Color = _fadeColor
+				canvas.Alpha = 1
+				
+				For Local y:Int = 0 Until _height
+					For Local x:Int = 0 Until _width
+						If pixels[x, y] = 1 Then
+							canvas.DrawRect(x, y, 2, 2)
+						End
+					Next
+				Next
+				
+				canvas.Color = _currentColor
+		End
 	End
 	
 End

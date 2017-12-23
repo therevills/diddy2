@@ -26,11 +26,12 @@ Private
 Public
 	
 	Field position:Vec2f
+	Field gravity:Vec2f = New Vec2f(0, 0)
 	Field originPosition:Vec2f
 	Field scale:Vec2f = New Vec2f(1, 1)
 	Field speed:Vec2f = New Vec2f(1, 1)
 	Field velocity:Vec2f = New Vec2f(0, 0)
-	Field deltaValue:Vec2f = New Vec2f(1, 1)
+	Field deltaValue:Vec2f = New Vec2f(0, 0)
 
 	Method New(image:Image, position:Vec2f)
 		Self.position = position
@@ -51,16 +52,18 @@ Public
 		Local localImage:Image
 
 		Local localPosition:Vec2f = position
+
 		localPosition.x -= offsetX
 		localPosition.y -= offsetY
 		
 		If roundPosition
-			localPosition.x = Int(localPosition.x)
-			localPosition.y = Int(localPosition.y)
+			localPosition.x = Floor(localPosition.x + 0.5)
+			localPosition.y = Floor(localPosition.y + 0.5)
 		End
+		
 		If roundRotation
 			Local d := ToDegrees(r)
-			d = Int(d)
+			d = Floor(d + 0.5)
 			r = ToRadians(d)
 		End
 		
@@ -113,6 +116,15 @@ Public
 		canvas.DrawText("_frameTimer: " + _frameTimer, 10, y)
 		y += gap
 	End
+	
+	Method Move()
+		position.x += deltaValue.x
+		position.y += deltaValue.y
+		
+		'apply gravity
+		If gravity.x <> 0 Then deltaValue.x += gravity.x
+		If gravity.y <> 0 Then deltaValue.y += gravity.y
+	End Method
 
 	Method MoveForward()
 		Local dx:Float = Sin(_rotation) * _speed 
