@@ -250,13 +250,10 @@ Public
 		_maxScrollY = maxScrollY
 	End
 	
-	Method Scroll(amountX:Float, amountY:Float = 0, round:Bool = False)
+	Method Scroll(amountX:Float, amountY:Float = 0)
 		ScrollX += amountX
 		ScrollY += amountY
-		If round
-			ScrollX = Floor(ScrollX + 0.5)
-			ScrollY = Floor(ScrollY + 0.5)
-		End
+
 		ScrollX = Clamp(ScrollX, 0.0, _maxScrollX - Width)
 		ScrollY = Clamp(ScrollY, 0.0, _maxScrollY - Height)
 	End

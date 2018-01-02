@@ -30,7 +30,13 @@ Public
 	
 	Property Active:Bool()
 		Return _active
-	End		
+	End	
+	
+	Property FadeColor:Color()
+		Return _fadeColor
+	Setter(col:Color)
+		_fadeColor = col
+	End
 	
 	Method New(width:Int, height:Int)
 		Self._width = width

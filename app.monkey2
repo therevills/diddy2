@@ -48,6 +48,10 @@ Public
 		Return _appInstance
 	End
 	
+	Property FilterTextures:Bool()
+		Return _filterTextures
+	End
+	
 	Property AssetBank:AssetBank()
 		Return _assetBank
 	End

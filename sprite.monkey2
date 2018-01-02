@@ -24,7 +24,7 @@ Private
 	Field _maxPingPongAnimationCounter:Int = 1
 	Field _speed:Float = 1
 Public
-	
+	Field name:String
 	Field position:Vec2f
 	Field gravity:Vec2f = New Vec2f(0, 0)
 	Field originPosition:Vec2f
@@ -32,7 +32,8 @@ Public
 	Field speed:Vec2f = New Vec2f(1, 1)
 	Field velocity:Vec2f = New Vec2f(0, 0)
 	Field deltaValue:Vec2f = New Vec2f(0, 0)
-
+	Field track:Bool = False
+	
 	Method New(image:Image, position:Vec2f)
 		Self.position = position
 		Self.originPosition = position
@@ -57,13 +58,17 @@ Public
 		localPosition.y -= offsetY
 		
 		If roundPosition
-			localPosition.x = Floor(localPosition.x + 0.5)
-			localPosition.y = Floor(localPosition.y + 0.5)
+			localPosition.x = Floor(localPosition.x)
+			localPosition.y = Floor(localPosition.y)
+		End
+		
+		If track
+			'Print "localPosition = " + localPosition
 		End
 		
 		If roundRotation
 			Local d := ToDegrees(r)
-			d = Floor(d + 0.5)
+			d = Floor(d)
 			r = ToRadians(d)
 		End
 		
