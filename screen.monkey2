@@ -15,6 +15,7 @@ Public
 	Const OPTIONS_SCREEN:String = "OptionsScreen"
 	Const GAME_OVER_SCREEN:String = "GameOverScreen"
 	Const LEVEL_SELECT_SCREEN:String = "LevelSelectScreen"
+	Const CREDITS_SCREEN:String = "CreditsScreen"
 
 	Property ScreenBank:ScreenBank()
 		Return _screenBank
