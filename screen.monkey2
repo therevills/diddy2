@@ -90,6 +90,9 @@ Public
 		Window.NextScreen.PreStart()
 	End
 	
+	Method OnKeyEvent( event:KeyEvent ) Virtual
+	End
+	
 	Method Kill() Virtual
 	End
 	

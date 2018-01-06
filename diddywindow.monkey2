@@ -116,6 +116,10 @@ Public
 		s.PreStart(ScreenFade.FADE_IN, 0)
 	End
 	
+	Method OnKeyEvent(event:KeyEvent) Override
+		If _currentScreen<>Null _currentScreen.OnKeyEvent(event)
+	End
+	
 	Method GameLogic(fixedRate:Float)
 		If _screenFade.Active
 			_screenFade.Update(fixedRate)
