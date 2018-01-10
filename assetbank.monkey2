@@ -18,7 +18,7 @@ Public
 		_filterTextures = filterTextures
 	End
 
-	Method LoadFont(fileName:String, size:Int)
+	Method LoadFont:Font(fileName:String, size:Int)
 		Local path:String = _prefix + _fontPath + fileName
 		Local fnt:Font = Font.Load(path, size)
 		If Not fnt
@@ -27,6 +27,7 @@ Public
 		End
 		Local fontAsset := New FontAsset(fileName.ToUpper(), fnt)
 		Set(fileName.ToUpper(), fontAsset)
+		Return fnt
 	End
 	
 	Method GetFont:Font(name:String)
@@ -161,7 +162,7 @@ Public
 		End
 	End
 	
-	Method LoadSound(fileName:String)
+	Method LoadSound:Sound(fileName:String)
 		Local path:String = _prefix + _soundPath + fileName
 		Local sound:Sound = Sound.Load(path)
 		If Not sound
@@ -170,6 +171,7 @@ Public
 		End
 		Local soundAsset := New SoundAsset(fileName.ToUpper(), sound)
 		Set(fileName.ToUpper(), soundAsset)
+		Return sound
 	End
 	
 	Method GetImage:Image(name:String, autoLoad:Bool = False, setMidHandle:Bool = True)

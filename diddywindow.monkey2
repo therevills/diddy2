@@ -208,6 +208,12 @@ Public
 		Return _virtualResolution
 	End
 	
+	Method CheckMusicPausedState(paused:Bool)
+		If ChannelManager.MusicChannel
+			ChannelManager.MusicChannel.Paused = paused
+		End
+	End
+	
 	Method OnWindowEvent(event:WindowEvent) Override
 		Select event.Type
 			Case EventType.WindowMoved	
@@ -215,9 +221,11 @@ Public
 				App.RequestRender()
 			Case EventType.WindowGainedFocus
 				_paused = False
+				CheckMusicPausedState(_paused)
 				If _timer _timer.Suspended = False
 			Case EventType.WindowLostFocus
 				_paused = True
+				CheckMusicPausedState(_paused)
 				GameTime.oldTime = Millisecs()
 				If _timer _timer.Suspended = True
 			Default

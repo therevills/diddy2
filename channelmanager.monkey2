@@ -1,6 +1,18 @@
 Namespace diddy2.channelmanager
 
 Class ChannelManager
+	Private
+	Global _prefix:String = "asset::"
+	Global _musicPath:String = "music/"
+	
+	Public
+	Global MusicChannel:Channel
+	Global MusicFileName:String
+	Global MusicVolume:Float
+	
+	Global LoopMusic:Bool
+	Global ForceStop:Bool
+	
 	Const MAX_CHANNELS:Int = 32
 	Const MUSIC_CHANNEL:Int = 32
 	Global ChannelIndex:Int
@@ -30,8 +42,20 @@ Class ChannelManager
 		ChannelArray[index].Volume = volume
 	End
 	
+	Function SetChannelPan(pan:Float, index:Int)
+		ChannelArray[index].Pan = pan
+	End
+
+	Function SetChannelRate(rate:Float, index:Int)
+		ChannelArray[index].Rate = rate
+	End
+	
 	Function SetMusicVolume(volume:Float)
-		ChannelArray[MUSIC_CHANNEL].Volume = volume
+		If MusicChannel
+			MusicChannel.Volume = volume
+			MusicVolume = volume
+		End
+		
 	End
 	
 	Function PlayMusic(s:Sound, pan:Float=0, rate:Float=1, volume:Float=1, loop:Bool = True)
@@ -42,6 +66,32 @@ Class ChannelManager
 		ChannelArray[MUSIC_CHANNEL].Volume = volume
 		
 		If loop Then ChannelState[MUSIC_CHANNEL] = 1
+	End
+	
+	Function PlayMusic(filename:String, loop:Bool, volume:Float)
+		ForceStop = False
+		
+		If MusicChannel
+			If MusicChannel.Playing
+				ForceStop = True
+				MusicChannel.Stop()
+			End
+		End
+		
+		MusicChannel = Audio.PlayMusic(_prefix + _musicPath + filename, MusicFinished)
+		If MusicChannel
+			LoopMusic = loop
+			MusicFileName = filename
+			SetMusicVolume(volume)
+		Else
+			Print "MusicChannel is null - check file " + (_prefix + _musicPath + filename)
+		End
+	End
+	
+	Function MusicFinished()
+		If LoopMusic And Not ForceStop
+			PlayMusic(MusicFileName, LoopMusic, MusicVolume)
+		End
 	End
 	
 	Function PlaySound:Int(s:Sound, pan:Float=0, rate:Float=1, volume:Float=-1, loop:Bool = False, channel:Int = -1)
