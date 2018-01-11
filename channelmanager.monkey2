@@ -9,6 +9,7 @@ Class ChannelManager
 	Global MusicChannel:Channel
 	Global MusicFileName:String
 	Global MusicVolume:Float
+	Global MaxVolume:Float = 1
 	
 	Global LoopMusic:Bool
 	Global ForceStop:Bool
@@ -39,7 +40,7 @@ Class ChannelManager
 	End
 	
 	Function SetChannelVolume(volume:Float, index:Int)
-		ChannelArray[index].Volume = volume
+		ChannelArray[index].Volume = volume * MaxVolume
 	End
 	
 	Function SetChannelPan(pan:Float, index:Int)

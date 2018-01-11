@@ -33,6 +33,7 @@ Public
 		_soundVolume = amount
 		For Local i:Int = 0 Until ChannelManager.MAX_CHANNELS
 			ChannelManager.SetChannelVolume(_soundVolume, i)
+			ChannelManager.MaxVolume = _soundVolume
 		Next
 	End
 

@@ -50,7 +50,11 @@ Public
 		instance = Self
 		GameTime = New FixedRateLogicTimer(UPDATE_FREQUENCY, SPIKE_SUPPRESSION)
 	End
-
+	
+	Method OnCreateWindow() Override
+		ClearColor = Color.Black
+	End
+	
 	Property UpdateMode:Int()
 		Return _updateMode
 	Setter(mode:Int)
