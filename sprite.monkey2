@@ -33,6 +33,7 @@ Public
 	Field velocity:Vec2f = New Vec2f(0, 0)
 	Field deltaValue:Vec2f = New Vec2f(0, 0)
 	Field track:Bool = False
+	Field currentAnimationName:String
 	
 	Method New(image:Image, position:Vec2f)
 		Self.position = position
@@ -238,6 +239,7 @@ Public
 	
 	Method SetCurrentAnimation(nameOfAnimation:String, frameTimerSpeed:Int = 125, loopAnimation:Bool = False, pingPongAnimation:Bool = False, startFrame:Int = 0)
 		_currentAnimation = GetAnimation(nameOfAnimation, frameTimerSpeed, loopAnimation, pingPongAnimation, startFrame)
+		currentAnimationName = nameOfAnimation
 	End
 	
 	Method UpdateAnimation:Bool()
