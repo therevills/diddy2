@@ -59,6 +59,10 @@ Class ChannelManager
 		
 	End
 	
+	Function GetChannel:Channel(index:Int)
+		Return ChannelArray[index]
+	End
+	
 	Function PlayMusic(s:Sound, pan:Float=0, rate:Float=1, volume:Float=1, loop:Bool = True)
 		ChannelArray[MUSIC_CHANNEL].Stop()
 		ChannelArray[MUSIC_CHANNEL].Play(s, loop)
