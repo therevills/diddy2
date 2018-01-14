@@ -34,6 +34,7 @@ Public
 	Field deltaValue:Vec2f = New Vec2f(0, 0)
 	Field track:Bool = False
 	Field currentAnimationName:String
+	Field collRect:Rectf
 	
 	Method New(image:Image, position:Vec2f)
 		Self.position = position
@@ -126,6 +127,22 @@ Public
 		y += gap
 		canvas.DrawText("_frameTimer: " + _frameTimer, 10, y)
 		y += gap
+	End
+	
+	Method UpdateCollisionRect(bufferX:Float = 0, bufferY:Float = 0)
+		Local image:Image
+		If CurrentAnimation
+			image = CurrentAnimation[Frame]
+		Else
+			image = Image
+		End
+		Local ww := Window
+		Local x0 := position.x + image.Bounds.Left - ww.ScrollX - (bufferX / 2)
+		Local y0 := position.y + image.Bounds.Top - ww.ScrollY - (bufferY / 2)
+		Local x1 := x0 + image.Width + bufferX
+		Local y1 := y0 + image.Height + bufferY
+
+		collRect = New Rectf(x0, y0, x1 ,y1 )
 	End
 	
 	Method Move()
