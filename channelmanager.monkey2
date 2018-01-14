@@ -34,6 +34,12 @@ Class ChannelManager
 		Next
 	End
 	
+	Function PauseChannels:Void(_pause:Bool)
+		For Local i:Int = 0 Until MAX_CHANNELS
+			ChannelArray[i].Paused = _pause
+		Next
+	End
+	
 	Function StopChannel:Void(channel:Int)
 		ChannelArray[channel].Stop()
 		ChannelState[channel] = 0

@@ -43,6 +43,14 @@ Public
 	End
 	
 	Method Render(canvas:Canvas, offsetX:Float = 0, offsetY:Float = 0, roundPosition:Bool = False, roundRotation:Bool = False) Virtual
+		Local localImage:Image
+		If _currentAnimation
+			localImage = _currentAnimation[_frame]
+		Else
+			localImage = _image
+		End
+				
+
 		Local canvasColor := canvas.Color
 		Local canvasAlpha := canvas.Alpha
 		
@@ -50,9 +58,6 @@ Public
 		canvas.Alpha = _alpha
 
 		Local r := RotationDisplay
-		
-		Local localImage:Image
-
 		Local localPosition:Vec2f = position
 
 		localPosition.x -= offsetX
@@ -63,10 +68,6 @@ Public
 			localPosition.y = Floor(localPosition.y)
 		End
 		
-		If track
-			'Print "localPosition = " + localPosition
-		End
-		
 		If roundRotation
 			Local d := ToDegrees(r)
 			d = Floor(d)
@@ -75,16 +76,7 @@ Public
 		
 		Local s := scale
 
-		If _currentAnimation
-			localImage = _currentAnimation[_frame]
-			
-			canvas.DrawImage(localImage, localPosition, r, s)
-		Else
-			localImage = _image
-			
-			canvas.DrawImage(localImage, localPosition, r, s)
-		End
-
+		canvas.DrawImage(localImage, localPosition, r, s)
 		
 
 		Local vrWidth  :=  DiddyApp.GetInstance().Window.VirtualResolution.X
@@ -100,8 +92,21 @@ Public
 			If localPosition.y + localImage.Radius > vrHeight canvas.DrawImage(localImage, localPosition.x, localPosition.y - vrHeight, r, s.x, s.y)
 		End
 		
+'			Local bx:Float = 10
+'			Local by:Float = 10
+'			
+'			Local x0 := position.x + localImage.Bounds.Left - offsetX - bx / 2
+'			Local y0 := position.y + localImage.Bounds.Top - offsetY - by / 2
+'			Local x1 := x0 + localImage.Width + bx
+'			Local y1 := y0 + localImage.Height + by
+'			Local rect := New Rectf(x0, y0, x1, y1)
+'			canvas.Alpha = 0.2
+'			canvas.DrawRect(rect)
+'			
+		
 		canvas.Color = canvasColor
 		canvas.Alpha = canvasAlpha
+
 	End
 	
 	Property RotationDisplay:Float()
@@ -292,5 +297,34 @@ Public
 	
 	Property Window:DiddyWindow()
 		Return DiddyApp.GetInstance().Window
+	End
+	
+	Method OnScreen:Bool(bufferX:Float = 0, bufferY:Float = 0)
+		Local image:Image
+		If _currentAnimation
+			image = _currentAnimation[_frame]
+		Else
+			image = _image
+		End
+		
+		Local ww := Window
+		
+		Local wr := ww.Rect
+
+		Local x0 := position.x + image.Bounds.Left - ww.ScrollX - (bufferX / 2)
+		Local y0 := position.y + image.Bounds.Top - ww.ScrollY - (bufferY / 2)
+		Local x1 := x0 + image.Width + bufferX
+		Local y1 := y0 + image.Height + bufferY
+
+
+		Local collRect := New Rectf(x0, y0, x1 ,y1 )
+
+
+		If collRect.Intersects(wr)
+			Return True
+		End
+
+
+		Return False
 	End
 End

@@ -199,8 +199,12 @@ Public
 				_dt.UpdateDelta()
 				GameLogic(_dt.delta)
 			End
+			If _updateMode = UpdateModeFlag.TIMER
+				tween = 1
+			End
 		End
 		App.RequestRender()
+		
 		GameRender(canvas, tween)
 	End
 	
@@ -216,6 +220,7 @@ Public
 		If ChannelManager.MusicChannel
 			ChannelManager.MusicChannel.Paused = paused
 		End
+		ChannelManager.PauseChannels(paused)
 	End
 	
 	Method OnWindowEvent(event:WindowEvent) Override
