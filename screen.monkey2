@@ -8,15 +8,17 @@ Private
 	Field _allowUpdatesInFade:Bool = False
 	
 Public
-	Const EMPTY_SCREEN:String = "EmptyScreen"
-	Const EXIT_SCREEN:String = "ExitScreen"
-	Const GAME_SCREEN:String = "GameScreen"
-	Const TITLE_SCREEN:String = "TitleScreen"
-	Const OPTIONS_SCREEN:String = "OptionsScreen"
-	Const GAME_OVER_SCREEN:String = "GameOverScreen"
-	Const LEVEL_SELECT_SCREEN:String = "LevelSelectScreen"
-	Const CREDITS_SCREEN:String = "CreditsScreen"
-
+	Const EMPTY_SCREEN:String         = "EmptyScreen"
+	Const EXIT_SCREEN:String          = "ExitScreen"
+	Const GAME_SCREEN:String          = "GameScreen"
+	Const TITLE_SCREEN:String         = "TitleScreen"
+	Const LEVEL_END_SCREEN:String     = "LevelEndScreen"
+	Const OPTIONS_SCREEN:String       = "OptionsScreen"
+	Const GAME_OVER_SCREEN:String     = "GameOverScreen"
+	Const LEVEL_SELECT_SCREEN:String  = "LevelSelectScreen"
+	Const CREDITS_SCREEN:String       = "CreditsScreen"
+	Const GAME_COMPLETE_SCREEN:String = "GameCompleteScreen"
+	
 	Property ScreenBank:ScreenBank()
 		Return _screenBank
 	Setter(screenBank:ScreenBank)
@@ -100,13 +102,13 @@ Public
 		_destinationScreen = screen
 	End
 	
-	Method MoveToScreen(screen:Screen, fadeTimeMs:Float = ScreenFade.DefaultFadeTimeMs)
+	Method MoveToScreen(screen:Screen, fadeTimeMs:Float = ScreenFade.DefaultFadeTimeMs, fadeSound:Bool = True, fadeMusic:Bool = True)
 		If Window.ScreenFade.Active Then Return
 		Window.NextScreen = screen
 		If fadeTimeMs <= 0 
 			DiddyApp.GetCurrentScreen().PostFadeOut()
 		Else
-			Window.ScreenFade.Start(ScreenFade.FADE_OUT, fadeTimeMs)
+			Window.ScreenFade.Start(ScreenFade.FADE_OUT, fadeTimeMs, fadeSound, fadeMusic)
 		End
 	End
 End
