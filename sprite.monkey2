@@ -3,7 +3,7 @@ Namespace diddy2.sprite
 Class Sprite
 Private
 	Field _z:Float
-	Field _rotation:Float = Pi / 2
+	Field _rotation:Float
 	Field _image:Image
 	Field _wrapImageX:Bool = False
 	Field _wrapImageY:Bool = False
@@ -58,7 +58,6 @@ Public
 		canvas.Color = _colour
 		canvas.Alpha = _alpha
 
-		Local r := RotationDisplay
 		Local localPosition:Vec2f = position
 
 		localPosition.x -= offsetX
@@ -69,15 +68,16 @@ Public
 			localPosition.y = Floor(localPosition.y)
 		End
 		
+		Local r := _rotation
 		If roundRotation
-			Local d := ToDegrees(r)
+			Local d := ToDegrees(_rotation)
 			d = Floor(d)
 			r = ToRadians(d)
 		End
 		
 		Local s := scale
 
-		canvas.DrawImage(localImage, localPosition, r, s)
+		canvas.DrawImage(localImage, localPosition, -r, s)
 		
 
 		Local vrWidth  :=  DiddyApp.GetInstance().Window.VirtualResolution.X
@@ -93,25 +93,8 @@ Public
 			If localPosition.y + localImage.Radius > vrHeight canvas.DrawImage(localImage, localPosition.x, localPosition.y - vrHeight, r, s.x, s.y)
 		End
 		
-'			Local bx:Float = 10
-'			Local by:Float = 10
-'			
-'			Local x0 := position.x + localImage.Bounds.Left - offsetX - bx / 2
-'			Local y0 := position.y + localImage.Bounds.Top - offsetY - by / 2
-'			Local x1 := x0 + localImage.Width + bx
-'			Local y1 := y0 + localImage.Height + by
-'			Local rect := New Rectf(x0, y0, x1, y1)
-'			canvas.Alpha = 0.2
-'			canvas.DrawRect(rect)
-'			
-		
 		canvas.Color = canvasColor
 		canvas.Alpha = canvasAlpha
-
-	End
-	
-	Property RotationDisplay:Float()
-		Return _rotation - Pi / 2
 	End
 	
 	Method RenderDebug(canvas:Canvas)
@@ -155,8 +138,8 @@ Public
 	End Method
 
 	Method MoveForward()
-		Local dx:Float = Sin(_rotation) * _speed 
-		Local dy:Float = Cos(_rotation) * _speed
+		Local dx:Float = Cos(_rotation) * _speed 
+		Local dy:Float = Sin(_rotation) * _speed
 		
 		position.x += dx
 		position.y += dy
