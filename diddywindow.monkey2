@@ -278,4 +278,12 @@ Public
 		ScrollX = Clamp(ScrollX, 0.0, _maxScrollX - Width)
 		ScrollY = Clamp(ScrollY, 0.0, _maxScrollY - Height)
 	End
+	
+	Method ScrollTo(sx:Float, sy:Float)
+		ScrollX = sx
+		ScrollY = sy
+
+		ScrollX = Clamp(ScrollX, 0.0, _maxScrollX - Width)
+		ScrollY = Clamp(ScrollY, 0.0, _maxScrollY - Height)
+	End
 End
