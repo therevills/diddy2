@@ -53,3 +53,7 @@ Function LoadSpriteSheet:Image[] (path:String, numFrames:Int, cellWidth:Int, cel
 	atlasImg = Null
 	Return imgs
 End
+
+Function DebugPrint(msg:String)
+	Print Millisecs() + ": " + msg
+End

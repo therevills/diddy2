@@ -138,7 +138,7 @@ Public
 				Print "Screen Fade TotalTime = " + totalTime
 			End
 			If _fadeType = FADE_OUT		
-				DiddyApp.GetInstance().GetCurrentScreen().PostFadeOut()
+				DiddyApp.GetInstance().GetCurrentScreen().PostFadeOut(_fadeSound, _fadeMusic)
 			Else
 				DiddyApp.GetInstance().GetCurrentScreen().PostFadeIn()
 			End

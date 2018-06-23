@@ -35,6 +35,7 @@ Public
 	Field track:Bool = False
 	Field currentAnimationName:String
 	Field collRect:Rectf
+	Field displayCollRect:Bool
 	
 	Method New(image:Image, position:Vec2f)
 		Self.position = position
@@ -95,6 +96,9 @@ Public
 		
 		canvas.Color = canvasColor
 		canvas.Alpha = canvasAlpha
+		If displayCollRect
+			canvas.DrawRect(collRect)
+		End
 	End
 	
 	Method RenderDebug(canvas:Canvas)
