@@ -61,10 +61,10 @@ Public
 		Self._name = name
 	End
 	
-	Method PreStart(fadeType:Int = ScreenFade.FADE_IN, fadeTimeMs:Float = ScreenFade.DefaultFadeTimeMs, fadeSound:Bool = True, fadeMusic:Bool = True)
+	Method PreStart(fadeType:Int = ScreenFade.FADE_IN, fadeTimeMs:Float = ScreenFade.DefaultFadeTimeMs, fadeSound:Bool = True, fadeMusic:Bool = True, _stopMusicOnFadeIn:Bool = False)
 		DiddyApp.SetCurrentScreen(Self)
 		Load()
-		Window.ScreenFade.Start(fadeType, fadeTimeMs, fadeSound, fadeMusic)
+		Window.ScreenFade.Start(fadeType, fadeTimeMs, fadeSound, fadeMusic, _stopMusicOnFadeIn)
 		DiddyApp.AppInstance.ResetPolledInput()
 		Start()
 	End
@@ -87,9 +87,9 @@ Public
 	
 	Method Update(fixedRate:Float) Abstract
 	
-	Method PostFadeOut(fadeSound:Bool = True, fadeMusic:Bool = True)
+	Method PostFadeOut(fadeSound:Bool = True, fadeMusic:Bool = True, stopMusicOnFadeIn:Bool = False)
 		Kill()
-		Window.NextScreen.PreStart(,,fadeSound, fadeMusic)
+		Window.NextScreen.PreStart(,,fadeSound, fadeMusic, stopMusicOnFadeIn)
 	End
 	
 	Method OnKeyEvent( event:KeyEvent ) Virtual
@@ -102,13 +102,13 @@ Public
 		_destinationScreen = screen
 	End
 	
-	Method MoveToScreen(screen:Screen, fadeTimeMs:Float = ScreenFade.DefaultFadeTimeMs, fadeSound:Bool = True, fadeMusic:Bool = True)
+	Method MoveToScreen(screen:Screen, fadeTimeMs:Float = ScreenFade.DefaultFadeTimeMs, fadeSound:Bool = True, fadeMusic:Bool = True, stopMusicOnFadeIn:Bool = False)
 		If Window.ScreenFade.Active Then Return
 		Window.NextScreen = screen
 		If fadeTimeMs <= 0 
-			DiddyApp.GetCurrentScreen().PostFadeOut(fadeSound, fadeMusic)
+			DiddyApp.GetCurrentScreen().PostFadeOut(fadeSound, fadeMusic, stopMusicOnFadeIn)
 		Else
-			Window.ScreenFade.Start(ScreenFade.FADE_OUT, fadeTimeMs, fadeSound, fadeMusic)
+			Window.ScreenFade.Start(ScreenFade.FADE_OUT, fadeTimeMs, fadeSound, fadeMusic, stopMusicOnFadeIn)
 		End
 	End
 End

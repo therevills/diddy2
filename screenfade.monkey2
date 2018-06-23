@@ -15,6 +15,7 @@ Private
 	Field _fadeMusic:Bool
 	Field _fadeSound:Bool
 	Field _startTime:Int
+	Field _stopMusicOnFadeIn:Bool
 	Field _debug:Bool = False
 	
 	
@@ -44,13 +45,14 @@ Public
 		Self.pixels = New Int[Self._width, Self._height]
 	End
 	
-	Method Start(fadeType:Int = FADE_IN, fadeTimeMs:Float = DefaultFadeTimeMs, fadeSound:Bool = True, fadeMusic:Bool = True)
+	Method Start(fadeType:Int = FADE_IN, fadeTimeMs:Float = DefaultFadeTimeMs, fadeSound:Bool = True, fadeMusic:Bool = True, stopMusicOnFadeIn:Bool = False)
 		If _active Then Return
 		_active = True
 		SetFadeTime(fadeTimeMs)
 		_fadeType = fadeType
 		_fadeMusic = fadeMusic
 		_fadeSound = fadeSound
+		_stopMusicOnFadeIn = stopMusicOnFadeIn
 		
 		If _fadeType = FADE_OUT
 			For Local y:Int = 0 Until _height
@@ -130,6 +132,10 @@ Public
 		If _fadeMusic
 			DiddyApp.GetInstance().ChannelManager.SetMusicVolume(_ratio * DiddyApp.GetInstance().MusicVolume)
 		End
+
+		If _stopMusicOnFadeIn And _fadeType = FADE_IN
+			DiddyApp.GetInstance().ChannelManager.StopMusic()
+		End
 		
 		If _counter > _fadeTime
 			_active = False
@@ -138,7 +144,7 @@ Public
 				Print "Screen Fade TotalTime = " + totalTime
 			End
 			If _fadeType = FADE_OUT		
-				DiddyApp.GetInstance().GetCurrentScreen().PostFadeOut(_fadeSound, _fadeMusic)
+				DiddyApp.GetInstance().GetCurrentScreen().PostFadeOut(_fadeSound, _fadeMusic,_stopMusicOnFadeIn)
 			Else
 				DiddyApp.GetInstance().GetCurrentScreen().PostFadeIn()
 			End

@@ -82,12 +82,7 @@ Class ChannelManager
 	Function PlayMusic(filename:String, loop:Bool, volume:Float)
 		ForceStop = False
 		
-		If MusicChannel
-			If MusicChannel.Playing
-				ForceStop = True
-				MusicChannel.Stop()
-			End
-		End
+		StopMusic()
 		
 		MusicChannel = Audio.PlayMusic(_prefix + _musicPath + filename, MusicFinished)
 		If MusicChannel
@@ -96,6 +91,15 @@ Class ChannelManager
 			SetMusicVolume(volume)
 		Else
 			Print "MusicChannel is null - check file " + (_prefix + _musicPath + filename)
+		End
+	End
+	
+	Function StopMusic()
+		If MusicChannel
+			If MusicChannel.Playing
+				ForceStop = True
+				MusicChannel.Stop()
+			End
 		End
 	End
 	
