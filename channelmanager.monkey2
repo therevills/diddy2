@@ -109,6 +109,23 @@ Class ChannelManager
 		End
 	End
 	
+	Function SetPan(objectPosition1:Vec2f, objectPosition2:Vec2f, channelIndex:Int)
+		Local diff:Float = objectPosition1.x - objectPosition2.x
+		Local pan:Float = diff / (DiddyApp.GetWindow().Width / 2)
+		pan = Clamp(pan, -1.0, 1.0)
+		SetChannelPan(pan, channelIndex)
+	End
+	
+	Function SetPanAndVolume(objectPosition1:Vec2f, objectPosition2:Vec2f, channelIndex:Int)
+		
+		SetPan(objectPosition1, objectPosition2, channelIndex)
+		Local d := Dist(objectPosition1.x, objectPosition1.y, objectPosition2.x, objectPosition2.y)
+		Local vol:Float = 1 - Abs(d / DiddyApp.GetWindow().Width)
+		vol = Clamp(vol, 0.0, 1.0)
+		
+		SetChannelVolume(vol, channelIndex)
+	End
+	
 	Function PlaySound:Int(s:Sound, pan:Float=0, rate:Float=1, volume:Float=-1, loop:Bool = False, channel:Int = -1)
 		If channel = -1
 			Local cnt:Int = 0

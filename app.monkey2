@@ -73,6 +73,10 @@ Public
 		Return GetInstance()._window
 	End
 	
+	Function GetChannelManager:ChannelManager()
+		Return GetInstance()._channelManager
+	End
+	
 	Function GetScreenBank:ScreenBank()
 		Return GetInstance()._window.ScreenBank
 	End
