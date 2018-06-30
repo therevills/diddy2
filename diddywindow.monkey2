@@ -1,5 +1,11 @@
 Namespace diddy2.window
 
+Class GameView Extends View
+	Method OnRender( canvas:Canvas ) Override
+		canvas.DrawText( "Game Rendering goes here!",Width/2,Height/2,.5,.5 )
+	End
+End
+
 Class DiddyWindow Extends Window
 
 Private
@@ -21,10 +27,12 @@ Private
 	Field _paused:Bool
 	Field _filterTextures:Bool
 	Field _filterUpdated:Bool
+
+	
 Public
 	Const UPDATE_FREQUENCY:Float = 100.0
 	Const SPIKE_SUPPRESSION:Int = 10
-	
+
 	Enum UpdateModeFlag
 		FRL
 		TIMER
@@ -49,6 +57,7 @@ Public
 		ClearColor = Color.Black
 		instance = Self
 		GameTime = New FixedRateLogicTimer(UPDATE_FREQUENCY, SPIKE_SUPPRESSION)
+
 	End
 	
 '	Method OnCreateWindow() Override
@@ -184,6 +193,7 @@ Public
 	End
 	
 	Method OnRender(canvas:Canvas) Override
+
 		Local tween:Float
 		If _paused
 			GameTime.oldTime = Millisecs()
@@ -204,7 +214,7 @@ Public
 			End
 		End
 		App.RequestRender()
-		
+
 		GameRender(canvas, tween)
 	End
 	

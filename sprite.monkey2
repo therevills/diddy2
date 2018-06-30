@@ -36,12 +36,14 @@ Public
 	Field currentAnimationName:String
 	Field collRect:Rectf
 	Field displayCollRect:Bool
+	Field displayCollRectAlpha:Float = .5
 	
 	Method New(image:Image, position:Vec2f)
 		Self.position = position
 		Self.originPosition = position
 		_image = image
 		_animationBank = New AnimationBank
+		UpdateCollisionRect()
 	End
 	
 	Method Render(canvas:Canvas, offsetX:Float = 0, offsetY:Float = 0, roundPosition:Bool = False, roundRotation:Bool = False) Virtual
@@ -97,7 +99,9 @@ Public
 		canvas.Color = canvasColor
 		canvas.Alpha = canvasAlpha
 		If displayCollRect
+			canvas.Alpha = displayCollRectAlpha
 			canvas.DrawRect(collRect)
+			canvas.Alpha = canvasAlpha
 		End
 	End
 	
@@ -116,7 +120,23 @@ Public
 		y += gap
 	End
 	
-	Method UpdateCollisionRect(bufferX:Float = 0, bufferY:Float = 0)
+	Method MouseCollision:Bool(ignoreScroll:Bool = True, mouseBufferX:Float = 2, mouseBufferY:Float = 2, updateCollisionRect:Bool = True, bufferX:Float = 0, bufferY:Float = 0)
+		Local mx := Mouse.X
+		Local my := Mouse.Y
+		Local collRect := New Rectf(mx, my, mx + mouseBufferX ,my + mouseBufferY)
+		
+		If updateCollisionRect
+			UpdateCollisionRect(bufferX, bufferY, ignoreScroll)
+		End
+	
+		If Self.collRect.Intersects(collRect)
+			Return True
+		End
+		Return False
+	End
+
+	
+	Method UpdateCollisionRect(bufferX:Float = 0, bufferY:Float = 0, ignoreScroll:Bool = False)
 		Local image:Image
 		If CurrentAnimation
 			image = CurrentAnimation[Frame]
@@ -124,8 +144,14 @@ Public
 			image = Image
 		End
 		Local ww := Window
-		Local x0 := position.x + image.Bounds.Left - ww.ScrollX - (bufferX / 2)
-		Local y0 := position.y + image.Bounds.Top - ww.ScrollY - (bufferY / 2)
+		Local sx:Float = ww.ScrollX
+		Local sy:Float = ww.ScrollY
+		If ignoreScroll
+			sx = 0
+			sy = 0
+		End
+		Local x0 := position.x + image.Bounds.Left - sx - (bufferX / 2)
+		Local y0 := position.y + image.Bounds.Top - sy - (bufferY / 2)
 		Local x1 := x0 + image.Width + bufferX
 		Local y1 := y0 + image.Height + bufferY
 

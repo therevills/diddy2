@@ -23,6 +23,9 @@ Public
 	End
 
 	Function GetInstance:DiddyApp()
+		If Not _Instance
+			Print "ERROR: DiddyApp instance is NULL"
+		End
 		Return _Instance
 	End
 
